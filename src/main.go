@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"golang.org/x/term"
@@ -16,6 +17,24 @@ type Vector2 struct {
 	x, y int
 }
 
+
+// Level
+type Level struct {
+	sprite string
+}
+
+func (l *Level) loadLevel(filename string) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		log.Fatal("Could not load level file!")
+		return
+	}
+	l.sprite = string(data)
+}
+
+func (l *Level) draw() {
+	fmt.Printf("\033[0;0H%s", l.sprite)
+}
 
 // Player
 type Player struct {
@@ -59,7 +78,6 @@ func main() {
 	// Initialize terminal shit
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
-		// Universe not as expected
 		panic(err)
 	}
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
@@ -73,27 +91,76 @@ func main() {
 	}()
 
 
-	drawable := []Drawable{}
-
-	fmt.Print("\033[2J\033[H")
-	fmt.Println("Use arrow keys to move '@'. Press 'q' to quit.")
-	fmt.Print("\033[3;3H@")
-
-	buf := make([]byte, 1)
+	
+	mode := "level_editor" // main or level_editor
 
 
-	player := &Player{pos: Vector2{0, 0}, sprite: "|--O--|"}
-	drawable = append(drawable, player)
-	for {
-		_, err := os.Stdin.Read(buf)
-		if err != nil {
-			log.Fatal(err)
+	switch mode {
+	case "main":
+		drawable := []Drawable{}
+
+		fmt.Print("\033[2J\033[H")
+		fmt.Println("Use arrow keys to move '@'. Press 'q' to quit.")
+		fmt.Print("\033[3;3H@")
+
+		buf := make([]byte, 1)
+
+
+		player := &Player{pos: Vector2{0, 0}, sprite: "&"}
+		level := &Level{sprite: ""}
+		l := `###############################################################
+		###############################################################`
+		level.sprite = l
+		drawable = append(drawable, player)
+		drawable = append(drawable, level)
+		for {
+			_, err := os.Stdin.Read(buf)
+			if err != nil {
+				log.Fatal(err)
+			}
+			player.move(buf[0])
+			drawAll(drawable)
+			
+			if buf[0] == 'q' {
+				return
+			}
 		}
-		player.move(buf[0])
-		drawAll(drawable)
+	case "level_editor":
+		fmt.Printf("\033[2J\033[H")
+		level := strings.Repeat("# ", 95 * 47)
+		fmt.Print(level) // 95x47 is how much it takes for the whole screen on my laptop
 		
-		if buf[0] == 'q' {
-			return
+		buf := make([]byte, 3)
+
+		x, y := 0, 0
+		for {
+			fmt.Printf("\033[2J\033[H")
+			fmt.Print(level)
+			fmt.Printf("\033[%d;%dH", y, x)
+			_, err = os.Stdin.Read(buf)
+			if err != nil {
+				log.Fatal(err)
+			}
+			switch buf[0] {
+			case 'q':
+				return
+			case '\033':
+				if buf[1] == '[' {
+					switch buf[2]{
+					case 'A':
+						y--
+					case 'B':
+						y++
+					case 'C':
+						x++
+					case 'D':
+						x--
+					}
+				}
+			}
+			
 		}
+
+
 	}
 }
