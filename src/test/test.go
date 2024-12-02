@@ -13,6 +13,8 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		var test [3][4]int
+		fmt.Print(test)
 		fmt.Printf("%T", buf)
 	}
 }

@@ -127,9 +127,13 @@ func main() {
 		}
 	case "level_editor":
 		fmt.Printf("\033[2J\033[H")
-		level := strings.Repeat("# ", 95 * 47)
-		fmt.Print(level) // 95x47 is how much it takes for the whole screen on my laptop
-		
+
+		var level [45]string
+		for idx := range level {			
+			level[idx] = strings.Repeat("# ", 95) // 95x47 is how much it takes for the whole screen on my laptop
+			fmt.Printf("\033[%d;%dH%s", idx, 0 , level[idx])
+		}
+	
 		buf := make([]byte, 3)
 
 		x, y := 0, 0
@@ -141,9 +145,15 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+
+
+			
+
 			switch buf[0] {
 			case 'q':
 				return
+			case ' ':
+
 			case '\033':
 				if buf[1] == '[' {
 					switch buf[2]{
