@@ -75,7 +75,6 @@ func drawAll(elems []Drawable) {
 
 
 func main() {
-	// Initialize terminal shit
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		panic(err)
@@ -131,29 +130,38 @@ func main() {
 		var level [45]string
 		for idx := range level {			
 			level[idx] = strings.Repeat("# ", 95) // 95x47 is how much it takes for the whole screen on my laptop
-			fmt.Printf("\033[%d;%dH%s", idx, 0 , level[idx])
+		}	
+		
+		// made it only draw when needed cause computer couldn't keep up when moving the cursor fast
+		drawLevel := func () {
+			for idx, val := range level {
+				fmt.Printf("\033[%d;%dH%s", idx, 0, val)
+			}
 		}
-	
-		buf := make([]byte, 3)
 
+		drawLevel()
+
+		buf := make([]byte, 3)
+		
+		
+		console := []string{}
 		x, y := 0, 0
 		for {
-			fmt.Printf("\033[2J\033[H")
-			fmt.Print(level)
+
 			fmt.Printf("\033[%d;%dH", y, x)
 			_, err = os.Stdin.Read(buf)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-
-			
-
 			switch buf[0] {
 			case 'q':
 				return
 			case ' ':
-
+				runes := []rune(level[y])
+				runes[y] = ' '
+				level[y] = string(runes)
+				drawLevel()
 			case '\033':
 				if buf[1] == '[' {
 					switch buf[2]{
@@ -168,6 +176,11 @@ func main() {
 					}
 				}
 			}
+			console = append(console, fmt.Sprintf("X: %d  Y: %d", x, y))
+			for _, val := range console {
+				fmt.Printf("\033[47;0H%s", val)
+			}
+
 			
 		}
 
