@@ -74,6 +74,15 @@ func drawAll(elems []Drawable) {
 }
 
 
+// Misc 
+
+func getCursorCords() string {
+	ansi_string := "\033[6n"
+	return ansi_string
+}
+
+
+
 func main() {
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
@@ -134,9 +143,11 @@ func main() {
 		
 		// made it only draw when needed cause computer couldn't keep up when moving the cursor fast
 		drawLevel := func () {
+			fmt.Printf("\033[s")
 			for idx, val := range level {
 				fmt.Printf("\033[%d;%dH%s", idx, 0, val)
 			}
+			fmt.Printf("\033[u")
 		}
 
 		drawLevel()
@@ -148,7 +159,7 @@ func main() {
 		x, y := 0, 0
 		for {
 
-			fmt.Printf("\033[%d;%dH", y, x)
+			//fmt.Printf("\033[%d;%dH", y, x)
 			_, err = os.Stdin.Read(buf)
 			if err != nil {
 				log.Fatal(err)
@@ -158,29 +169,28 @@ func main() {
 			case 'q':
 				return
 			case ' ':
-				runes := []rune(level[y])
-				runes[y] = ' '
-				level[y] = string(runes)
+				console = append(console, getCursorCords())
 				drawLevel()
 			case '\033':
 				if buf[1] == '[' {
 					switch buf[2]{
 					case 'A':
-						y--
+						fmt.Printf("\033[1A")
 					case 'B':
-						y++
+						fmt.Printf("\033[1B")
 					case 'C':
-						x++
+						fmt.Printf("\033[1C")
 					case 'D':
-						x--
+						fmt.Printf("\033[1D")
 					}
 				}
 			}
 			console = append(console, fmt.Sprintf("X: %d  Y: %d", x, y))
+			fmt.Printf("\033[s")
 			for _, val := range console {
 				fmt.Printf("\033[47;0H%s", val)
 			}
-
+			fmt.Printf("\033[u")
 			
 		}
 
