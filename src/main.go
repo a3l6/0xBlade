@@ -156,7 +156,7 @@ func main() {
 		
 		
 		console := []string{}
-		x, y := 0, 0
+		//x, y := 0, 0
 		for {
 
 			//fmt.Printf("\033[%d;%dH", y, x)
@@ -173,24 +173,16 @@ func main() {
 				drawLevel()
 			case '\033':
 				if buf[1] == '[' {
-					switch buf[2]{
-					case 'A':
-						fmt.Printf("\033[1A")
-					case 'B':
-						fmt.Printf("\033[1B")
-					case 'C':
-						fmt.Printf("\033[1C")
-					case 'D':
-						fmt.Printf("\033[1D")
-					}
+					fmt.Printf("\033[1%s", string(buf[2]))
+
 				}
 			}
-			console = append(console, fmt.Sprintf("X: %d  Y: %d", x, y))
-			fmt.Printf("\033[s")
-			for _, val := range console {
-				fmt.Printf("\033[47;0H%s", val)
+			//console = append(console, fmt.Sprintf("X: %d  Y: %d", x, y))
+			if len(console) > 0 {
+				fmt.Printf("\033[s")
+				fmt.Printf("\033[47;0H%s", console[0])
+				fmt.Printf("\033[u")
 			}
-			fmt.Printf("\033[u")
 			
 		}
 
