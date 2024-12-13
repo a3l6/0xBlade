@@ -165,7 +165,7 @@ func main() {
 			}
 		}
 
-		drawSquare(&level, "..", false, 15)
+		drawSquare(&level, "  ", false, 20)
 
 		// made it only draw when needed cause computer couldn't keep up when moving the cursor fast
 		drawLevel := func () {
