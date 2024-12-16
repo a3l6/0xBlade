@@ -65,7 +65,7 @@ type Drawable interface {
 }
 
 func drawAll(elems []Drawable) {
-	fmt.Print("\033[2J\033[H")
+	//	fmt.Print("\033[2J\033[H")
 	for i := 0; i < len(elems); i++ {
 		elems[i].draw()
 	}
@@ -75,7 +75,7 @@ func drawAll(elems []Drawable) {
 // Utility Funcs
 
 func getCursorCords() string {
-	ansi_string := fmt.Sprintf("\033[6n")
+	ansi_string := "\033[6n"
 	return ansi_string
 }
 
@@ -94,8 +94,9 @@ func contentsOfFile(filename string) ([]string, error) {
 	}
 	defer file.Close()
 
-	buf := make([]byte, 1024)
+	buf := make([]byte, 1)
 	data := make([]string, windowHeight)
+	var currentLine string
 	for {
 		n, err := file.Read(buf)
 		if err != nil {
@@ -105,7 +106,15 @@ func contentsOfFile(filename string) ([]string, error) {
 			}
 			break
 		}
-		data += string(buf[:n])
+
+		char := string(buf[0])
+
+		if char == "\n" {
+			data = append(data, string(buf[:n]))
+			currentLine = ""			
+		} else {
+			currentLine += char
+		}
 	}
 	return data, nil
 }
@@ -149,9 +158,9 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-
+		level.draw()
 		drawable = append(drawable, player)
-		drawable = append(drawable, level)
+		//drawable = append(drawable, level)
 		for {
 			_, err := os.Stdin.Read(buf)
 			if err != nil {
