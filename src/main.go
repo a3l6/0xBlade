@@ -14,10 +14,14 @@ import (
 // Vector
 //  Not a complete vector implementation
 // Just here cause pygame and unity
+
 type Vector2 struct {
 	x, y int
 }
 
+func addVector2(a Vector2, b Vector2) Vector2 {
+	return Vector2{x: (a.x + b.x), y: a.y + b.y}
+}
 
 // Level
 
@@ -25,6 +29,10 @@ const windowHeight int = 45
 
 type Level struct {
 	sprite []string
+	upperBound int
+	lowerBound int
+	leftBound int
+	rightBound int
 }
 
 func (l *Level) draw() {
@@ -37,20 +45,30 @@ func (l *Level) draw() {
 // Player
 type Player struct {
 	pos Vector2
+	velocity Vector2
 	sprite string
+	l *Level
+
 }
 
 func (p *Player) move(char uint8) {
 	switch char {
 	case 'w':
-		p.pos.y--
+		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+		p.velocity.y--
 	case 's':
-		p.pos.y++
+		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+		p.velocity.y++
 	case 'a':
-		p.pos.x--
+		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+		p.velocity.x--
 	case 'd':
-		p.pos.x++
+		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+		p.velocity.x++
 	}
+
+	p.pos = addVector2(p.pos, p.velocity)
+	p.velocity = Vector2{x:0,y:0}
 
 }
 
@@ -95,10 +113,10 @@ func contentsOfFile(filename string) ([]string, error) {
 	defer file.Close()
 
 	buf := make([]byte, 1)
-	data := make([]string, windowHeight)
+	var data []string
 	var currentLine string
 	for {
-		n, err := file.Read(buf)
+		_, err := file.Read(buf)
 		if err != nil {
 			if err.Error() != "EOF" {
 				fmt.Println("Error Reading file: ", err)
@@ -110,7 +128,7 @@ func contentsOfFile(filename string) ([]string, error) {
 		char := string(buf[0])
 
 		if char == "\n" {
-			data = append(data, string(buf[:n]))
+			data = append(data, currentLine)
 			currentLine = ""			
 		} else {
 			currentLine += char
@@ -144,23 +162,50 @@ func main() {
 	case "main":
 		drawable := []Drawable{}
 
-		fmt.Print("\033[2J\033[H")
-		fmt.Println("Use arrow keys to move '@'. Press 'q' to quit.")
-		fmt.Print("\033[3;3H@")
+		//fmt.Print("\033[2J\033[H")
+		//fmt.Println("Use arrow keys to move '@'. Press 'q' to quit.")
+		//fmt.Print("\033[3;3H@")
 
 		buf := make([]byte, 1)
 
 
-		player := &Player{pos: Vector2{0, 0}, sprite: "&"}
-		level := &Level{sprite: make([]string, windowHeight)}
-		
-		level.sprite, err = contentsOfFile("level.txt")
+		level := &Level{sprite: make([]string, windowHeight), upperBound: 0, lowerBound: 0, rightBound: 0, leftBound: 0}
+		player := &Player{pos: Vector2{0, 0}, sprite: "&", l: level}
+
+
+		sprite, err := contentsOfFile("src/level.txt")
 		if err != nil {
 			panic(err)
 		}
+		level.sprite = sprite
+
+
+
+
+
+
+		fileName := "level1.txt"
+		data := strings.Join(level.sprite, "\n")
+		file, err := os.Create(fileName)
+		if err != nil {
+			fmt.Println("Cannot create file! ", err)
+			return
+		}
+		defer file.Close()
+
+		_, err = file.WriteString(data)
+		if err != nil {
+			fmt.Println("Error writing to file, " , err)
+		}
+
+
+
+
+
+		
 		level.draw()
-		drawable = append(drawable, player)
 		//drawable = append(drawable, level)
+		drawable = append(drawable, player)
 		for {
 			_, err := os.Stdin.Read(buf)
 			if err != nil {
