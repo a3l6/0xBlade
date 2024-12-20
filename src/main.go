@@ -42,27 +42,40 @@ func (l *Level) draw() {
 	}
 	fmt.Printf("\033[u")}
 
+// Keymap
+type Keymap struct {
+	up uint8
+	down uint8
+	left uint8
+	right uint8
+
+	aimUp uint8
+	aimDown uint8
+	aimLeft uint8
+	aimRight uint8
+}
+
 // Player
 type Player struct {
 	pos Vector2
 	velocity Vector2
 	sprite string
 	l *Level
-
+	keymap Keymap
 }
 
 func (p *Player) move(char uint8) {
 	switch char {
-	case 'w':
+	case p.keymap.up:
 		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 		p.velocity.y--
-	case 's':
+	case p.keymap.down:
 		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 		p.velocity.y++
-	case 'a':
+	case p.keymap.left:
 		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 		p.velocity.x--
-	case 'd':
+	case p.keymap.right:
 		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 		p.velocity.x++
 	}
@@ -184,7 +197,8 @@ func main() {
 
 
 		level := &Level{sprite: make([]string, windowHeight), upperBound: 2, lowerBound: 42, rightBound: 140, leftBound: 60}
-		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level}
+		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
+		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level, keymap: keymap}
 
 
 		sprite, err := contentsOfFile("src/level.txt")
