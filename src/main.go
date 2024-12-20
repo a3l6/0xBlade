@@ -67,7 +67,21 @@ func (p *Player) move(char uint8) {
 		p.velocity.x++
 	}
 
-	p.pos = addVector2(p.pos, p.velocity)
+	newPos := addVector2(p.pos, p.velocity)
+	if newPos.x < (*p.l).leftBound {
+		newPos.x++
+	}
+	if newPos.x > (*p.l).rightBound {
+		newPos.x--
+	}
+	if newPos.y < (*p.l).upperBound {
+		newPos.y++
+	}
+	if newPos.y > (*p.l).lowerBound {
+		newPos.y--
+	}
+
+	p.pos = newPos
 	p.velocity = Vector2{x:0,y:0}
 
 }
@@ -169,8 +183,8 @@ func main() {
 		buf := make([]byte, 1)
 
 
-		level := &Level{sprite: make([]string, windowHeight), upperBound: 0, lowerBound: 0, rightBound: 0, leftBound: 0}
-		player := &Player{pos: Vector2{0, 0}, sprite: "&", l: level}
+		level := &Level{sprite: make([]string, windowHeight), upperBound: 2, lowerBound: 42, rightBound: 140, leftBound: 60}
+		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level}
 
 
 		sprite, err := contentsOfFile("src/level.txt")
@@ -178,9 +192,6 @@ func main() {
 			panic(err)
 		}
 		level.sprite = sprite
-
-
-
 
 
 
