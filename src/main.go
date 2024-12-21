@@ -117,20 +117,6 @@ func drawAll(elems []Drawable) {
 }
 
 
-// Utility Funcs
-
-func getCursorCords() string {
-	ansi_string := "\033[6n"
-	return ansi_string
-}
-
-func abs(x int) int {
-	if x < 0 {
-		return 0 - x 
-	}
-	return x 
-}
-
 func contentsOfFile(filename string) ([]string, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -252,7 +238,7 @@ func main() {
 		}	
 
 		drawSquare := func (lev *[]string, replacementChar string, trueSquare bool, radius int){
-			radius = abs(radius)
+			radius = Abs(radius)
 			centerx, centery := 80, 22
 
 			for idx, val := range level {
@@ -301,7 +287,7 @@ func main() {
 		buf := make([]byte, 3)
 		
 		
-		console := []string{}
+		//console := []string{}
 		//x, y := 0, 0
 		for {
 
@@ -315,7 +301,6 @@ func main() {
 			case 'q':
 				return
 			case ' ':
-				console = append(console, getCursorCords())
 				fmt.Printf("\033[s")
 				fmt.Printf("\033[47;0HCONSOLE: %s", "\033[6n")
 				fmt.Printf("\033[u")
