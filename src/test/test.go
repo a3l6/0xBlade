@@ -2,17 +2,28 @@ package main
 
 import (
 	"fmt"
-	"log"
+	/*"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"golang.org/x/term"
-)
+	"golang.org/x/term"*/)
 
+func goRoutineCounter(c *int64){
+	for {
+		(*c)++
+	}
+}
+// THEREFORE GOROUTINE CAN AFFECT OTHER VARS
 func main() {
+	var counter int64
+	go goRoutineCounter(&counter)
 
-	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	for {
+		fmt.Printf("%d\n", counter)
+	}
+	
+	/*oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		panic(err)
 	}
@@ -38,4 +49,5 @@ func main() {
 		fmt.Print(fmt.Sprintf("\033[6n"))
 		fmt.Printf("\033[6n")
 	}
+		*/
 }

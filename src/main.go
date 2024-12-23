@@ -7,40 +7,13 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"golang.org/x/term"
 )
 
-// Vector
-//  Not a complete vector implementation
-// Just here cause pygame and unity
-
-type Vector2 struct {
-	x, y int
-}
-
-func addVector2(a Vector2, b Vector2) Vector2 {
-	return Vector2{x: (a.x + b.x), y: a.y + b.y}
-}
-
-// Level
-
 const windowHeight int = 45
 
-type Level struct {
-	sprite []string
-	upperBound int
-	lowerBound int
-	leftBound int
-	rightBound int
-}
-
-func (l *Level) draw() {
-	fmt.Printf("\033[s")
-	for idx, val := range l.sprite {
-		fmt.Printf("\033[%d;%dH%s", idx, 0, val)
-	}
-	fmt.Printf("\033[u")}
 
 // Keymap
 type Keymap struct {
@@ -53,139 +26,6 @@ type Keymap struct {
 	aimDown uint8
 	aimLeft uint8
 	aimRight uint8
-}
-
-// Player
-type Player struct {
-	pos Vector2
-	velocity Vector2
-	sprite string
-	l *Level
-	keymap Keymap
-}
-
-func (p *Player) move(char uint8) {
-	switch char {
-	case p.keymap.up:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.y--
-	case p.keymap.down:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.y++
-	case p.keymap.left:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.x--
-	case p.keymap.right:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.x++
-	}
-
-	newPos := addVector2(p.pos, p.velocity)
-	if newPos.x < (*p.l).leftBound {
-		newPos.x++
-	}
-	if newPos.x > (*p.l).rightBound {
-		newPos.x--
-	}
-	if newPos.y < (*p.l).upperBound {
-		newPos.y++
-	}
-	if newPos.y > (*p.l).lowerBound {
-		newPos.y--
-	}
-
-	p.pos = newPos
-	p.velocity = Vector2{x:0,y:0}
-
-}
-
-func (p *Player) draw() {
-	fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
-}
-
-// Grenade
-type Grenade struct {
-	pos Vector2
-	vel Vector2
-	sprite string
-	trailSprite string
-	step uint // between 1-4
-	amplitude int
-}
-
-func (g *Grenade) draw() {
-	fmt.Printf("\033[s")
-	sprite := g.trailSprite
-	switch g.step {
-	case 0:
-		g.step++
-	case 1:
-		g.pos.y -= 1 * g.amplitude
-		g.pos.x++ 
-		g.step++
-	case 2:
-		g.pos.y -= 2 * g.amplitude
-		g.pos.x++
-		g.step++
-	case 3:
-		g.pos.y += 2 * g.amplitude
-		g.pos.x++
-		g.step++
-	case 4:
-		g.pos.y += 1 * g.amplitude
-		g.pos.x++
-		sprite = g.sprite
-		g.step = 0
-	}
-	fmt.Printf("\033[%d;%dH%s", g.pos.y, g.pos.x, sprite)
-	fmt.Printf("\033[u")
-}
-
-
-// Drawing 
-type Drawable interface {
-	draw()
-}
-
-func drawAll(elems []Drawable) {
-	//	fmt.Print("\033[2J\033[H")
-	for i := 0; i < len(elems); i++ {
-		elems[i].draw()
-	}
-}
-
-
-func contentsOfFile(filename string) ([]string, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return make([]string, 0), err
-	}
-	defer file.Close()
-
-	buf := make([]byte, 1)
-	var data []string
-	var currentLine string
-	for {
-		_, err := file.Read(buf)
-		if err != nil {
-			if err.Error() != "EOF" {
-				fmt.Println("Error Reading file: ", err)
-				panic(err)
-			}
-			break
-		}
-
-		char := string(buf[0])
-
-		if char == "\n" {
-			data = append(data, currentLine)
-			currentLine = ""			
-		} else {
-			currentLine += char
-		}
-	}
-	return data, nil
 }
 
 
@@ -211,7 +51,8 @@ func main() {
 
 	switch mode {
 	case "main":
-		drawable := []Drawable{}
+
+		gameManager:= GameManager{[]Drawable{}}
 
 		//fmt.Print("\033[2J\033[H")
 		//fmt.Println("Use arrow keys to move '@'. Press 'q' to quit.")
@@ -224,12 +65,13 @@ func main() {
 		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level, keymap: keymap}
 
-
-		grenade := Grenade{pos: Vector2{65, 4}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1}
+		Grenades := make([]Grenade, 1)
+		grenade := Grenade{pos: Vector2{65, 4}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, grenades: &Grenades}
+		Grenades = append(Grenades, grenade)
 
 		sprite, err := contentsOfFile("src/level.txt")
 		if err != nil {
-			panic(err)
+			panic(err)	
 		}
 		level.sprite = sprite
 
@@ -251,23 +93,52 @@ func main() {
 
 
 
+		handleInputs := func () {
+			frameDuration := time.Second / 60
+			for {
+				start := time.Now()
+				_, err := os.Stdin.Read(buf)
+				if err != nil {
+					log.Fatal(err)
+					panic(err)
+				}
+				player.move(buf[0])
+
+				elapsed := time.Since(start)
+				sleepTime := frameDuration - elapsed
+				if sleepTime > 0 {
+					time.Sleep(sleepTime)
+				}
+			}
+			
+		}
+
 
 
 		
 		level.draw()
 		//drawable = append(drawable, level)
-		drawable = append(drawable, player)
-		drawable = append(drawable, &grenade)
+		//drawable = append(drawable, player)
+		//drawable = append(drawable, &grenade)
+		gameManager.registerAsDrawable(player, &grenade)
+
+		const fps = 60
+		frameDuration := time.Second / fps
+
+		go handleInputs()
 		for {
-			_, err := os.Stdin.Read(buf)
-			if err != nil {
-				log.Fatal(err)
-			}
-			player.move(buf[0])
-			drawAll(drawable)
-			
+			start := time.Now()
+
+			gameManager.drawScreen()
+
 			if buf[0] == 'q' {
 				return
+			}
+
+			elapsed := time.Since(start)
+			sleepTime := frameDuration - elapsed
+			if sleepTime > 0 {
+				time.Sleep(sleepTime)
 			}
 		}
 	case "level_editor":	// I dont need this
