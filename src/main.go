@@ -103,6 +103,44 @@ func (p *Player) draw() {
 	fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
 }
 
+// Grenade
+type Grenade struct {
+	pos Vector2
+	vel Vector2
+	sprite string
+	trailSprite string
+	step uint // between 1-4
+	amplitude int
+}
+
+func (g *Grenade) draw() {
+	fmt.Printf("\033[s")
+	sprite := g.trailSprite
+	switch g.step {
+	case 0:
+		g.step++
+	case 1:
+		g.pos.y -= 1 * g.amplitude
+		g.pos.x++ 
+		g.step++
+	case 2:
+		g.pos.y -= 2 * g.amplitude
+		g.pos.x++
+		g.step++
+	case 3:
+		g.pos.y += 2 * g.amplitude
+		g.pos.x++
+		g.step++
+	case 4:
+		g.pos.y += 1 * g.amplitude
+		g.pos.x++
+		sprite = g.sprite
+		g.step = 0
+	}
+	fmt.Printf("\033[%d;%dH%s", g.pos.y, g.pos.x, sprite)
+	fmt.Printf("\033[u")
+}
+
 
 // Drawing 
 type Drawable interface {
@@ -187,6 +225,8 @@ func main() {
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level, keymap: keymap}
 
 
+		grenade := Grenade{pos: Vector2{65, 4}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1}
+
 		sprite, err := contentsOfFile("src/level.txt")
 		if err != nil {
 			panic(err)
@@ -217,6 +257,7 @@ func main() {
 		level.draw()
 		//drawable = append(drawable, level)
 		drawable = append(drawable, player)
+		drawable = append(drawable, &grenade)
 		for {
 			_, err := os.Stdin.Read(buf)
 			if err != nil {
