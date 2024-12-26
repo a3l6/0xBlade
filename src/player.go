@@ -3,11 +3,11 @@ package main
 import "fmt"
 
 type Player struct {
-	pos Vector2
+	pos      Vector2
 	velocity Vector2
-	sprite string
-	l *Level
-	keymap Keymap
+	sprite   string
+	l        *Level
+	keymap   Keymap
 }
 
 func (p *Player) move(char uint8) {
@@ -41,7 +41,7 @@ func (p *Player) move(char uint8) {
 	}
 
 	p.pos = newPos
-	p.velocity = Vector2{x:0,y:0}
+	p.velocity = Vector2{x: 0, y: 0}
 
 }
 
