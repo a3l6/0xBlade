@@ -10,7 +10,7 @@ type GameManager struct {
 	drawable map[int]*Drawable
 	count    int
 	console  map[string]string
-	grenades []*Grenade
+	grenades []Grenade
 }
 
 // Registers with Game manager and returns id.
@@ -21,19 +21,25 @@ func (g *GameManager) registerAsObject(obj Drawable) int {
 	return g.count - 1
 }
 
+func (g *GameManager) createNewGrenade(pos Vector2) {
+	g.grenades = append(g.grenades, Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1})
+	idx := len(g.grenades) - 1
+	g.grenades[idx].id = g.registerAsObject(&g.grenades[idx])
+}
+
 func (g *GameManager) deleteObject(id int) {
 	delete(g.drawable, id)
 	if len(g.grenades) > 1 {
 		g.grenades = g.grenades[1:] // shouldn't be too slow because how many grenades are even gonna be on the page??
 
 	} else {
-		g.grenades = []*Grenade{}
+		g.grenades = make([]Grenade, 0)
 	}
 }
 
 func (g *GameManager) drawScreen() {
 	for i := 0; i < len(g.drawable); i++ {
-		(*g.drawable[i]).draw()
+		g.drawable[i].draw()
 	}
 
 	fmt.Printf("\033[s")

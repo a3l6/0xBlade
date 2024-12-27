@@ -12,6 +12,14 @@ func Abs(x int) int {
 	return x
 }
 
+// Returns greater int, if ints are the same then just returns one of them
+func Max(a int, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
 func contentsOfFile(filename string) ([]string, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -37,7 +45,7 @@ func contentsOfFile(filename string) ([]string, error) {
 
 		if char == "\n" {
 			data = append(data, currentLine)
-			currentLine = ""			
+			currentLine = ""
 		} else {
 			currentLine += char
 		}

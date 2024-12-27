@@ -30,7 +30,7 @@ type Keymap struct {
 var gameManager GameManager = GameManager{
 	drawable: make(map[int]*Drawable),
 	console:  make(map[string]string),
-	grenades: []*Grenade{},
+	grenades: make([]Grenade, 0),
 }
 
 func main() {
@@ -64,7 +64,8 @@ func main() {
 		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level, keymap: keymap}
 
-		grenade := &Grenade{pos: Vector2{65, 4}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1}
+		gameManager.createNewGrenade(Vector2{65, 4})
+
 		sprite, err := contentsOfFile("src/level.txt")
 		if err != nil {
 			panic(err)
@@ -96,9 +97,7 @@ func main() {
 				}
 				player.move(buf[0])
 				if buf[0] == ' ' {
-					g := &Grenade{pos: player.pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1} //createNewGrenade(player.pos)
-					g.id = gameManager.registerAsObject(g)
-					gameManager.grenades = append(gameManager.grenades, g)
+					gameManager.createNewGrenade(player.pos)
 				}
 
 				elapsed := time.Since(start)
@@ -117,7 +116,6 @@ func main() {
 		//gameManager.registerAsDrawable(player, &grenade)
 
 		gameManager.registerAsObject(player)
-		grenade.id = gameManager.registerAsObject(grenade)
 		const fps = 10
 		frameDuration := time.Second / fps
 
