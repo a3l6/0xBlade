@@ -28,6 +28,11 @@ func (g *GameManager) createNewGrenade(pos Vector2) {
 }
 
 func (g *GameManager) deleteObject(id int) {
+	if _, ok := g.drawable[id]; ok {
+		fmt.Printf("\0332J")
+	} else {
+		fmt.Print("Hello World")
+	}
 	delete(g.drawable, id)
 	if len(g.grenades) > 1 {
 		g.grenades = g.grenades[1:] // shouldn't be too slow because how many grenades are even gonna be on the page??
@@ -39,7 +44,8 @@ func (g *GameManager) deleteObject(id int) {
 
 func (g *GameManager) drawScreen() {
 	for i := 0; i < len(g.drawable); i++ {
-		g.drawable[i].draw()
+		fmt.Println(g.drawable[i])
+		(*g.drawable[i]).draw()
 	}
 
 	fmt.Printf("\033[s")
