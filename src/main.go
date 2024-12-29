@@ -30,7 +30,6 @@ type Keymap struct {
 var gameManager GameManager = GameManager{
 	drawable: make(map[int]*Drawable),
 	console:  make(map[string]string),
-	grenades: make([]Grenade, 0),
 }
 
 func main() {

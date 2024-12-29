@@ -10,7 +10,9 @@ type GameManager struct {
 	drawable map[int]*Drawable
 	count    int
 	console  map[string]string
-	grenades []Grenade
+	// TODO: Switch this to projectiles
+	grenades    [200]Grenade // should be able to use only 200 grenades at once
+	numGrenades int
 }
 
 // Registers with Game manager and returns id.
@@ -22,17 +24,10 @@ func (g *GameManager) registerAsObject(obj Drawable) int {
 }
 
 func (g *GameManager) createNewGrenade(pos Vector2) {
-	g.grenades = append(g.grenades, Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1})
-	idx := len(g.grenades) - 1
-	g.grenades[idx].id = g.registerAsObject(&g.grenades[idx])
+	g.grenades[g.numGrenades]
 }
 
 func (g *GameManager) deleteObject(id int) {
-	if _, ok := g.drawable[id]; ok {
-		fmt.Printf("\0332J")
-	} else {
-		fmt.Print("Hello World")
-	}
 	delete(g.drawable, id)
 	if len(g.grenades) > 1 {
 		g.grenades = g.grenades[1:] // shouldn't be too slow because how many grenades are even gonna be on the page??
