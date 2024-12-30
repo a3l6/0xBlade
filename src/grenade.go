@@ -16,6 +16,7 @@ type Grenade struct {
 	step        int // between 1-4
 	amplitude   int
 	id          int
+	creationID  uint8
 }
 
 // TODO: Mke grenade explosion
@@ -58,7 +59,7 @@ func (g *Grenade) draw() {
 		sprite = new_sprite
 		g.step++
 	default:
-		gameManager.deleteObject(g.id) // kill self
+		gameManager.deleteObject(g.id, g.creationID) // kill self
 	}
 	fmt.Printf("\033[%d;%dH%s", g.pos.y, g.pos.x, sprite)
 	fmt.Printf("\033[u")

@@ -14,7 +14,7 @@ type GameManager struct {
 	count    int
 	console  map[string]string
 	// TODO: Switch this to projectiles
-	grenades    [200]Grenade // should be able to use only 200 grenades at once
+	grenades    [100]Grenade // should be able to use only 200 grenades at once
 	numGrenades uint8
 }
 
@@ -27,24 +27,20 @@ func (g *GameManager) registerAsObject(obj Drawable) int {
 }
 
 func (g *GameManager) createNewGrenade(pos Vector2) error {
-	// 255 is limit for uint8
-	if g.numGrenades != 255 {
-		g.grenades[g.numGrenades] = Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1}
+	//  100 is max for grenades
+	if g.numGrenades != 100 {
+		g.grenades[g.numGrenades] = Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, creationID: g.numGrenades}
+		g.grenades[g.numGrenades].id = g.registerAsObject(&g.grenades[g.numGrenades])
 		g.numGrenades++
 		return nil
 	} else {
-		return errors.New("Too many projectiles made!")
+		return errors.New("too many projectiles made")
 	}
 }
 
-func (g *GameManager) deleteObject(id int) {
+func (g *GameManager) deleteObject(id int, creationID uint8) {
 	delete(g.drawable, id)
-	if len(g.grenades) > 1 {
-		g.grenades = g.grenades[1:] // shouldn't be too slow because how many grenades are even gonna be on the page??
-
-	} else {
-		g.grenades = make([]Grenade, 0)
-	}
+	g.grenades[creationID] = Grenade{pos: Vector2{0, 0}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, creationID: g.numGrenades}
 }
 
 func (g *GameManager) drawScreen() {
