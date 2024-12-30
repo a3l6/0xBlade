@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Drawable interface {
 	draw()
@@ -12,7 +15,7 @@ type GameManager struct {
 	console  map[string]string
 	// TODO: Switch this to projectiles
 	grenades    [200]Grenade // should be able to use only 200 grenades at once
-	numGrenades int
+	numGrenades uint8
 }
 
 // Registers with Game manager and returns id.
@@ -23,8 +26,15 @@ func (g *GameManager) registerAsObject(obj Drawable) int {
 	return g.count - 1
 }
 
-func (g *GameManager) createNewGrenade(pos Vector2) {
-	g.grenades[g.numGrenades]
+func (g *GameManager) createNewGrenade(pos Vector2) error {
+	// 255 is limit for uint8
+	if g.numGrenades != 255 {
+		g.grenades[g.numGrenades] = Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1}
+		g.numGrenades++
+		return nil
+	} else {
+		return errors.New("Too many projectiles made!")
+	}
 }
 
 func (g *GameManager) deleteObject(id int) {
