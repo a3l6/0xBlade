@@ -40,13 +40,14 @@ func (g *GameManager) createNewGrenade(pos Vector2) error {
 
 func (g *GameManager) deleteObject(id int, creationID uint8) {
 	delete(g.drawable, id)
+	// reset
 	g.grenades[creationID] = Grenade{pos: Vector2{0, 0}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, creationID: g.numGrenades}
 }
 
 func (g *GameManager) drawScreen() {
-	for i := 0; i < len(g.drawable); i++ {
-		fmt.Println(g.drawable[i])
-		(*g.drawable[i]).draw()
+	// See README.md #1 for explanation of why this over usual for loop
+	for _, val := range g.drawable {
+		(*val).draw()
 	}
 
 	fmt.Printf("\033[s")
