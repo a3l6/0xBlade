@@ -46,6 +46,7 @@ func (g *GameManager) deleteObject(id int, creationID uint8) {
 
 func (g *GameManager) drawScreen() {
 	// See README.md #1 for explanation of why this over usual for loop
+	// FUTURE ME: don't change to traditional for loop unless absolutely necessary
 	for _, val := range g.drawable {
 		(*val).draw()
 	}

@@ -25,20 +25,25 @@ func (g *Grenade) draw() {
 	sprite := g.trailSprite
 	switch g.step {
 	case 0:
+		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.step++
 	case 1:
+		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y -= 1 * g.amplitude
 		g.pos.x++
 		g.step++
 	case 2:
+		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y -= 2 * g.amplitude
 		g.pos.x++
 		g.step++
 	case 3:
+		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y += 2 * g.amplitude
 		g.pos.x++
 		g.step++
 	case 4:
+		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y += 1 * g.amplitude
 		g.pos.x++
 		sprite = g.sprite
@@ -58,8 +63,11 @@ func (g *Grenade) draw() {
 		new_sprite := "\0331A     \033[1B\033[4D     \033[1B\033[5D         \033[1B\033[5D   "
 		sprite = new_sprite
 		g.step++
-	default:
+	case 11:
+		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		gameManager.deleteObject(g.id, g.creationID) // kill self
+	default:
+		g.step++
 	}
 	fmt.Printf("\033[%d;%dH%s", g.pos.y, g.pos.x, sprite)
 	fmt.Printf("\033[u")
