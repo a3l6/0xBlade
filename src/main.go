@@ -57,7 +57,7 @@ func main() {
 		//fmt.Println("Use arrow keys to move '@'. Press 'q' to quit.")
 		//fmt.Print("\033[3;3H@")
 
-		buf := make([]byte, 1)
+		buf := make([]byte, 3)
 
 		level := &Level{sprite: make([]string, windowHeight), upperBound: 2, lowerBound: 42, rightBound: 140, leftBound: 60}
 		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
@@ -94,7 +94,8 @@ func main() {
 					log.Fatal(err)
 					panic(err)
 				}
-				player.move(buf[0])
+				player.move(buf)
+				gameManager.console["buf"] = "\"" + string(buf) + "\""
 				if buf[0] == ' ' {
 					gameManager.createNewGrenade(player.pos)
 				}

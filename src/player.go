@@ -10,20 +10,22 @@ type Player struct {
 	keymap   Keymap
 }
 
-func (p *Player) move(char uint8) {
-	switch char {
-	case p.keymap.up:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.y--
-	case p.keymap.down:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.y++
-	case p.keymap.left:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.x--
-	case p.keymap.right:
-		fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-		p.velocity.x++
+func (p *Player) move(chars []uint8) {
+	for _, val := range chars {
+		switch val {
+		case p.keymap.up:
+			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+			p.velocity.y--
+		case p.keymap.down:
+			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+			p.velocity.y++
+		case p.keymap.left:
+			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+			p.velocity.x--
+		case p.keymap.right:
+			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
+			p.velocity.x++
+		}
 	}
 
 	newPos := addVector2(p.pos, p.velocity)
