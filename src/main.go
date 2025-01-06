@@ -52,18 +52,11 @@ func main() {
 	switch mode {
 	case "main":
 
-		//gameManager := GameManager{drawable: make(map[int]*Drawable)}
-		//fmt.Print("\033[2J\033[H")
-		//fmt.Println("Use arrow keys to move '@'. Press 'q' to quit.")
-		//fmt.Print("\033[3;3H@")
-
 		buf := make([]byte, 3)
 
 		level := &Level{sprite: make([]string, windowHeight), upperBound: 2, lowerBound: 42, rightBound: 140, leftBound: 60}
 		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level, keymap: keymap}
-
-		gameManager.createNewGrenade(Vector2{65, 4})
 
 		sprite, err := contentsOfFile("src/level.txt")
 		if err != nil {
@@ -110,10 +103,6 @@ func main() {
 		}
 
 		level.draw()
-		//drawable = append(drawable, level)
-		//drawable = append(drawable, player)
-		//drawable = append(drawable, &grenade)
-		//gameManager.registerAsDrawable(player, &grenade)
 
 		gameManager.registerAsObject(player)
 		const fps = 10
