@@ -14,11 +14,14 @@ type GameManager struct {
 	count    int
 	console  map[string]string
 	// TODO: Switch this to projectiles
-	grenades    [100]Grenade // should be able to use only 200 grenades at once
+	grenades    [100]Grenade // should be able to use only 100 grenades at once
 	numGrenades uint8
+
+	enemies    [100]Enemy
+	numEnemies uint8
 }
 
-// Registers with Game manager and returns id.
+// Registers with Game manager and returns unique id.
 func (g *GameManager) registerAsObject(obj Drawable) int {
 	ptr := &obj
 	g.drawable[g.count] = ptr
@@ -35,6 +38,18 @@ func (g *GameManager) createNewGrenade(pos Vector2) error {
 		return nil
 	} else {
 		return errors.New("too many projectiles made")
+	}
+}
+
+func (g *GameManager) createNewEnemy(pos Vector2) error {
+	//  100 is max for enemies
+	if g.numEnemies != 100 {
+		g.enemies[g.numEnemies] = Enemy{pos: pos, sprite: "?", vel: Vector2{0, 0}, damage: 0, health: 100}
+		g.enemies[g.numEnemies].id = g.registerAsObject(&g.enemies[g.numEnemies])
+		g.numEnemies++
+		return nil
+	} else {
+		return errors.New("too many enemies spawned")
 	}
 }
 

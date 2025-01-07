@@ -90,7 +90,9 @@ func main() {
 				player.move(buf)
 				gameManager.console["buf"] = "\"" + string(buf) + "\""
 				if buf[0] == ' ' {
-					gameManager.createNewGrenade(player.pos)
+					err = gameManager.createNewGrenade(player.pos)
+					if err != nil {
+					}
 				}
 
 				elapsed := time.Since(start)

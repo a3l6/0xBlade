@@ -10,6 +10,24 @@ type Enemy struct {
 	health int
 }
 
-func (self Enemy) draw() {
-	fmt.Printf("\033[%d;%dH%s", self.pos.y, self.pos.x, self.sprite)
+// Simple movement towards player
+func (enemy *Enemy) step(playerPosition Vector2) {
+	if playerPosition.x > enemy.pos.x {
+		enemy.vel.x++
+	} else if playerPosition.x < enemy.pos.x {
+		enemy.vel.x--
+	}
+
+	if playerPosition.y > enemy.pos.y {
+		enemy.vel.y++
+	} else if playerPosition.y < enemy.pos.y {
+		enemy.vel.x--
+	}
+
+	enemy.pos = addVector2(enemy.pos, enemy.vel)
+
+}
+
+func (enemy Enemy) draw() {
+	fmt.Printf("\033[%d;%dH%s", enemy.pos.y, enemy.pos.x, enemy.sprite)
 }
