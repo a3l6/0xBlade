@@ -78,6 +78,7 @@ func main() {
 			fmt.Println("Error writing to file, ", err)
 		}
 
+		// Also draws screen because it runs at a faster frame rate.
 		handleInputs := func() {
 			frameDuration := time.Second / 120
 			for {
@@ -104,17 +105,36 @@ func main() {
 
 		}
 
+		handleDrawing := func() {
+			frameDuration := time.Second / 10
+			for {
+				start := time.Now()
+
+				gameManager.drawScreen()
+
+				elapsed := time.Since(start)
+				sleepTime := frameDuration - elapsed
+				if sleepTime > 0 {
+					time.Sleep(sleepTime)
+				}
+			}
+		}
+
 		level.draw()
 
 		gameManager.registerAsObject(player)
+
+		gameManager.createNewEnemy(player.pos, &player.pos)
+
 		const fps = 10
 		frameDuration := time.Second / fps
 
 		go handleInputs()
+		go handleDrawing()
+
+		fmt.Printf("\033[?25l")
 		for {
 			start := time.Now()
-
-			gameManager.drawScreen()
 
 			if buf[0] == 'q' {
 				return
@@ -126,6 +146,7 @@ func main() {
 				time.Sleep(sleepTime)
 			}
 		}
+
 	case "level_editor": // I dont need this
 		fmt.Printf("\033[2J\033[H")
 

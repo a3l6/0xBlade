@@ -4,10 +4,6 @@ import (
 	"fmt"
 )
 
-func createNewGrenade(pos Vector2) Grenade {
-	return Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1}
-}
-
 type Grenade struct {
 	pos         Vector2
 	vel         Vector2
