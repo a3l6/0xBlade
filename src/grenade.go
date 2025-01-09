@@ -19,10 +19,10 @@ type Grenade struct {
 func (g *Grenade) draw() {
 	fmt.Printf("\033[s")
 	sprite := g.trailSprite
+
+	//const fps = 1
+
 	switch g.step {
-	case 0:
-		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
-		g.step++
 	case 1:
 		fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y -= 1 * g.amplitude
@@ -65,6 +65,7 @@ func (g *Grenade) draw() {
 	default:
 		g.step++
 	}
+	gameManager.console["POS"] = fmt.Sprintf("X: %d, Y %d", g.pos.x, g.pos.y)
 	fmt.Printf("\033[%d;%dH%s", g.pos.y, g.pos.x, sprite)
 	fmt.Printf("\033[u")
 }

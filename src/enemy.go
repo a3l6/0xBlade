@@ -13,7 +13,7 @@ type Enemy struct {
 }
 
 // Simple movement towards player
-func (enemy *Enemy) step() {
+func (enemy *Enemy) Step() {
 	if (*enemy.playerPos).x > enemy.pos.x {
 		enemy.vel.x++
 	} else if (*enemy.playerPos).x < enemy.pos.x {

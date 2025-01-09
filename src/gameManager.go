@@ -58,7 +58,7 @@ func (g *GameManager) createNewEnemy(pos Vector2, ptrPos *Vector2) error {
 // Make sure to call at a specific frame rate .
 func (g *GameManager) StepAll() {
 	for idx := range g.enemies {
-		g.enemies[idx].step()
+		g.enemies[idx].Step()
 	}
 }
 
