@@ -88,6 +88,7 @@ func main() {
 					panic(err)
 				}
 				player.move(buf)
+
 				gameManager.console["buf"] = "\"" + string(buf) + "\""
 				if buf[0] == ' ' {
 					err = gameManager.createNewGrenade(player.pos)
@@ -104,11 +105,26 @@ func main() {
 
 		}
 
+		// Needs to run faster to update all the time
+		go func() {
+			frameDuration := time.Second / 120
+			for {
+				start := time.Now()
+				gameManager.drawScreen()
+
+				elapsed := time.Since(start)
+				sleepTime := frameDuration - elapsed
+				if sleepTime > 0 {
+					time.Sleep(sleepTime)
+				}
+			}
+		}()
+
 		level.draw()
 
 		gameManager.registerAsObject(player)
 
-		gameManager.createNewEnemy(player.pos, &player.pos)
+		gameManager.createNewEnemy(player.pos, player)
 
 		const fps = 10
 		frameDuration := time.Second / fps
@@ -118,7 +134,7 @@ func main() {
 		for {
 			start := time.Now()
 
-			gameManager.drawScreen()
+			gameManager.StepAll()
 
 			if buf[0] == 'q' {
 				return

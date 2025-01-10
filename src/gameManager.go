@@ -41,10 +41,10 @@ func (g *GameManager) createNewGrenade(pos Vector2) error {
 	}
 }
 
-func (g *GameManager) createNewEnemy(pos Vector2, ptrPos *Vector2) error {
+func (g *GameManager) createNewEnemy(pos Vector2, ptrPlayer *Player) error {
 	//  100 is max for enemies
 	if g.numEnemies != 100 {
-		g.enemies[g.numEnemies] = Enemy{pos: pos, playerPos: ptrPos, sprite: "?", vel: Vector2{0, 0}, damage: 0, health: 100}
+		g.enemies[g.numEnemies] = Enemy{pos: pos, player: ptrPlayer, sprite: "?", vel: Vector2{0, 0}, damage: 0, health: 100}
 		g.enemies[g.numEnemies].id = g.registerAsObject(&g.enemies[g.numEnemies])
 		g.numEnemies++
 		return nil
@@ -57,8 +57,12 @@ func (g *GameManager) createNewEnemy(pos Vector2, ptrPos *Vector2) error {
 // No array of stepable stuff, just manually add a new one.
 // Make sure to call at a specific frame rate .
 func (g *GameManager) StepAll() {
-	for idx := range g.enemies {
-		g.enemies[idx].Step()
+	for _, val := range g.enemies {
+		val.Step()
+	}
+
+	for idx := range g.grenades {
+		g.grenades[idx].Step()
 	}
 }
 

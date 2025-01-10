@@ -3,30 +3,32 @@ package main
 import "fmt"
 
 type Enemy struct {
-	pos       Vector2
-	playerPos *Vector2
-	sprite    string
-	vel       Vector2
-	damage    uint
-	health    int
-	id        int
+	pos    Vector2
+	player *Player
+	sprite string
+	vel    Vector2
+	damage uint
+	health int
+	id     int
 }
 
 // Simple movement towards player
-func (enemy *Enemy) Step() {
-	if (*enemy.playerPos).x > enemy.pos.x {
-		enemy.vel.x++
-	} else if (*enemy.playerPos).x < enemy.pos.x {
-		enemy.vel.x--
-	}
+func (e *Enemy) Step() {
+	if e.player != nil {
+		if e.player.pos.y > e.pos.y {
+			e.vel.y++
+		} else if e.player.pos.y < e.pos.y {
+			e.vel.x--
+		}
 
-	if (*enemy.playerPos).y > enemy.pos.y {
-		enemy.vel.y++
-	} else if (*enemy.playerPos).y < enemy.pos.y {
-		enemy.vel.x--
-	}
+		if e.player.pos.x > e.pos.x {
+			e.vel.x++
+		} else if e.player.pos.x < e.pos.x {
+			e.vel.x--
+		}
 
-	enemy.pos = addVector2(enemy.pos, enemy.vel)
+		e.pos = addVector2(e.pos, e.vel)
+	}
 
 }
 
