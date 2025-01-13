@@ -122,82 +122,16 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"sync"
-
-	"github.com/eiannone/keyboard"
+	"unsafe"
 )
 
+type foo struct {
+	x uint8
+	y uint8
+}
+
 func main() {
-	// Open the keyboard
-	if err := keyboard.Open(); err != nil {
-		log.Fatal(err)
-	}
-	defer keyboard.Close()
+	bar := foo{}
 
-	// Map to track the state of pressed keys
-	keyState := make(map[keyboard.Key]bool)
-	var mu sync.Mutex
-
-	fmt.Println("Press ESC to quit.")
-	fmt.Println("Press multiple keys simultaneously to see their states in real time.")
-
-	// Goroutine to continuously update key states
-	go func() {
-		for {
-			char, key, err := keyboard.GetKey()
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			mu.Lock()
-			if key != 0 {
-				// Special keys
-				keyState[key] = true
-			} else {
-				// Regular character keys
-				keyState[keyboard.Key(char)] = true
-			}
-			mu.Unlock()
-
-			// Check for ESC key to exit
-			if key == keyboard.KeyEsc {
-				return
-			}
-
-			// Simulate key release when keys are lifted
-			go func(releasedChar rune, releasedKey keyboard.Key) {
-				if releasedKey != 0 {
-					mu.Lock()
-					delete(keyState, releasedKey)
-					mu.Unlock()
-				} else {
-					mu.Lock()
-					delete(keyState, keyboard.Key(releasedChar))
-					mu.Unlock()
-				}
-			}(char, key)
-		}
-	}()
-
-	// Main loop to display the currently pressed keys
-	for {
-		mu.Lock()
-		if len(keyState) > 0 {
-			fmt.Print("Keys pressed: ")
-			for key := range keyState {
-				fmt.Printf("%v ", key)
-			}
-			fmt.Println()
-		}
-		mu.Unlock()
-
-		// Check for ESC key to quit
-		mu.Lock()
-		if keyState[keyboard.KeyEsc] {
-			fmt.Println("Exiting...")
-			break
-		}
-		mu.Unlock()
-	}
+	fmt.Println(unsafe.Sizeof(bar))
 }
