@@ -5,15 +5,14 @@ import (
 	"fmt"
 )
 
+
 type Level struct {
 	sprite []string
-	width  uint8
-	height uint8
-
 	upperBound int
 	lowerBound int
-	leftBound  int
+	leftBound int
 	rightBound int
+<<<<<<< HEAD
 	level      [][]LevelChar
 }
 
@@ -67,6 +66,8 @@ func (l *Level) render() {
 // Converts ONE row to a string and returns
 func (l *Level) renderln() string {
 	return ""
+=======
+>>>>>>> parent of 896a7a0 (Started on new level)
 }
 
 func (l *Level) draw() {
@@ -74,5 +75,4 @@ func (l *Level) draw() {
 	for idx, val := range l.sprite {
 		fmt.Printf("\033[%d;%dH%s", idx, 0, val)
 	}
-	fmt.Printf("\033[u")
-}
+	fmt.Printf("\033[u")}

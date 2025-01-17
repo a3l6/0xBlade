@@ -121,9 +121,7 @@ func main() {
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"unsafe"
 )
 
@@ -132,31 +130,8 @@ type foo struct {
 	y uint8
 }
 
-func bazz(x uint8) {
-	fmt.Print(x)
-}
-
 func main() {
 	bar := foo{}
 
 	fmt.Println(unsafe.Sizeof(bar))
-	x := "`~1234567890-=!@#$%^&*()_+qwertyuiopQWERTYUIOP[]{}\\|asdfghjklASDFGHJKL;:'\"zxcvbnmZXCVBNM,<.>/?"
-	for _, val := range x {
-		char := uint8(val)
-		fmt.Printf("X: %d TYPE: %T \r\n", char, char)
-	}
-	fmt.Print("\r\n")
-
-	for _, val := range x {
-		char := val
-		fmt.Printf("X: %d TYPE: %T \r\n", char, char)
-	}
-
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		text := scanner.Text()
-		for _, val := range text {
-			bazz(uint8(val)*140 + 200)
-		}
-	}
 }

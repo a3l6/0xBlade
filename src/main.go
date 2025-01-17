@@ -54,7 +54,7 @@ func main() {
 
 		buf := make([]byte, 3)
 
-		level := &Level{sprite: make([]string, windowHeight), upperBound: 2, lowerBound: 42, rightBound: 140, leftBound: 60} // 80 bytes
+		level := &Level{sprite: make([]string, windowHeight), upperBound: 2, lowerBound: 42, rightBound: 140, leftBound: 60}
 		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level, keymap: keymap}
 
@@ -139,6 +139,7 @@ func main() {
 			if buf[0] == 'q' {
 				return
 			}
+
 			elapsed := time.Since(start)
 			sleepTime := frameDuration - elapsed
 			if sleepTime > 0 {
