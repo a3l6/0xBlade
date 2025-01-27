@@ -6,8 +6,12 @@ type Player struct {
 	pos      Vector2
 	velocity Vector2
 	sprite   string
-	l        *Level
 	keymap   Keymap
+	id       int
+}
+
+func (p *Player) collision(obj int) {
+	// empty for now
 }
 
 func (p *Player) move(chars []uint8) {
@@ -29,16 +33,16 @@ func (p *Player) move(chars []uint8) {
 	}
 
 	newPos := addVector2(p.pos, p.velocity)
-	if newPos.x < (*p.l).leftBound {
+	if newPos.x < level.leftBound {
 		newPos.x++
 	}
-	if newPos.x > (*p.l).rightBound {
+	if newPos.x > level.rightBound {
 		newPos.x--
 	}
-	if newPos.y < (*p.l).upperBound {
+	if newPos.y < level.upperBound {
 		newPos.y++
 	}
-	if newPos.y > (*p.l).lowerBound {
+	if newPos.y > level.lowerBound {
 		newPos.y--
 	}
 
@@ -48,5 +52,6 @@ func (p *Player) move(chars []uint8) {
 }
 
 func (p *Player) draw() {
-	fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
+	level.print(p.id, p.sprite[0], uint8(p.pos.x), uint8(p.pos.y))
+	//fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
 }

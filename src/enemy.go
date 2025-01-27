@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+//imporf "fmt"
 
 type Enemy struct {
 	pos    Vector2
@@ -10,6 +10,11 @@ type Enemy struct {
 	damage uint
 	health int
 	id     int
+}
+
+func (e *Enemy) collision(obj int) {
+	//ptr_obj := gameManager.drawable[obj]
+
 }
 
 // Simple movement towards player
@@ -33,8 +38,10 @@ func (e *Enemy) Step() {
 }
 
 func (enemy Enemy) draw() {
-	fmt.Printf("\033[s")
-	fmt.Printf("\033[%d;%dH%s", enemy.pos.y, enemy.pos.x, enemy.sprite)
-	fmt.Printf("\033[u")
+	level.print(enemy.id, enemy.sprite[0], uint8(enemy.pos.x), uint8(enemy.pos.y))
+
+	//fmt.Printf("\033[s")
+	//fmt.Printf("\033[%d;%dH%s", enemy.pos.y, enemy.pos.x, enemy.sprite)
+	//fmt.Printf("\033[u")
 
 }

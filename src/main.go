@@ -12,25 +12,23 @@ import (
 	"golang.org/x/term"
 )
 
-const windowHeight int = 45
-
-// Keymap
-type Keymap struct {
-	up    uint8
-	down  uint8
-	left  uint8
-	right uint8
-
-	aimUp    uint8
-	aimDown  uint8
-	aimLeft  uint8
-	aimRight uint8
-}
+const windowHeight uint8 = 45
+const windowWidth uint16 = 95 * 2
 
 var gameManager GameManager = GameManager{
-	drawable: make(map[int]*Drawable),
+	drawable: make(map[int]*GameObject),
 	console:  make(map[string]string),
 }
+var l [windowHeight][windowWidth]LevelChar
+var level *Level = &Level{
+	sprite:     make([]string, windowHeight),
+	upperBound: 2,
+	lowerBound: 42,
+	rightBound: 140,
+	leftBound:  60,
+	height:     windowHeight,
+	width:      windowWidth,
+	level:      l}
 
 func main() {
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
@@ -54,9 +52,8 @@ func main() {
 
 		buf := make([]byte, 3)
 
-		level := &Level{sprite: make([]string, windowHeight), upperBound: 2, lowerBound: 42, rightBound: 140, leftBound: 60}
 		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
-		player := &Player{pos: Vector2{61, 2}, sprite: "&", l: level, keymap: keymap}
+		player := &Player{pos: Vector2{61, 2}, sprite: "&", keymap: keymap}
 
 		sprite, err := contentsOfFile("src/level.txt")
 		if err != nil {
@@ -122,7 +119,8 @@ func main() {
 
 		level.draw()
 
-		gameManager.registerAsObject(player)
+		level.id = gameManager.registerAsObject(level)
+		player.id = gameManager.registerAsObject(player)
 
 		gameManager.createNewEnemy(player.pos, player)
 
@@ -138,6 +136,22 @@ func main() {
 
 			if buf[0] == 'q' {
 				return
+			}
+			if buf[0] == 'e' {
+				fileName := "output.txt"
+				data := strings.Join(level.render(), "\n")
+				file, err := os.Create(fileName)
+				if err != nil {
+					fmt.Println("Cannot create file! ", err)
+					return
+				}
+				defer file.Close()
+
+				_, err = file.WriteString(data)
+
+				if err != nil {
+					fmt.Println("Error writing to file, ", err)
+				}
 			}
 
 			elapsed := time.Since(start)

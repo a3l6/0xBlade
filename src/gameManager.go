@@ -5,12 +5,13 @@ import (
 	"fmt"
 )
 
-type Drawable interface {
+type GameObject interface {
 	draw()
+	collision(int)
 }
 
 type GameManager struct {
-	drawable map[int]*Drawable
+	drawable map[int]*GameObject
 	count    int
 	console  map[string]string
 	// TODO: Switch this to projectiles
@@ -22,7 +23,7 @@ type GameManager struct {
 }
 
 // Registers with Game manager and returns unique id.
-func (g *GameManager) registerAsObject(obj Drawable) int {
+func (g *GameManager) registerAsObject(obj GameObject) int {
 	ptr := &obj
 	g.drawable[g.count] = ptr
 	g.count++
@@ -72,21 +73,44 @@ func (g *GameManager) deleteObject(id int, creationID uint8) {
 	g.grenades[creationID] = Grenade{pos: Vector2{0, 0}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, creationID: g.numGrenades}
 }
 
+func (g GameManager) NewCollision(master int, existing int) {
+	// Collision with level
+	if existing == 0 {
+		return
+	}
+
+	(*g.drawable[int(existing)]).collision(master)
+}
+
 func (g *GameManager) drawScreen() {
-	// See README.md #1 for explanation of why this over usual for loop
-	// FUTURE ME: don't change to traditional for loop unless absolutely necessary
-	for _, val := range g.drawable {
-		(*val).draw()
+
+	for _, obj := range g.drawable {
+		(*obj).draw()
 	}
 
 	fmt.Printf("\033[s")
-	var console string
-	for key, val := range g.console {
-		console += fmt.Sprintf("%s : %s", key, val)
+	fmt.Printf("\033[2J")
+	l := level.render()
+	for idx, val := range l {
+		fmt.Printf("\033[%d;%dH%s", idx, 0, val)
+
 	}
-	fmt.Printf("\033[%d;%dH", 47, 0)
-	fmt.Printf("\033[2K")
-	fmt.Printf("%s", console)
 	fmt.Printf("\033[u")
-	//g.console = make(map[string]string)
+	/*
+		// See README.md #1 for explanation of why this over usual for loop
+		// FUTURE ME: don't change to traditional for loop unless absolutely necessary
+		for _, val := range g.drawable {
+			(*val).draw()
+		}
+
+		fmt.Printf("\033[s")
+		var console string
+		for key, val := range g.console {
+			console += fmt.Sprintf("%s : %s", key, val)
+		}
+		fmt.Printf("\033[%d;%dH", 47, 0)
+		fmt.Printf("\033[2K")
+		fmt.Printf("%s", console)
+		fmt.Printf("\033[u")
+		//g.console = make(map[string]string) */
 }
