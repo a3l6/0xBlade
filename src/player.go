@@ -4,6 +4,7 @@ import "fmt"
 
 type Player struct {
 	pos      Vector2
+	lastPos  Vector2
 	velocity Vector2
 	sprite   string
 	keymap   Keymap
@@ -11,19 +12,16 @@ type Player struct {
 }
 
 func (p *Player) move(chars []uint8) {
+	p.lastPos = p.pos
 	for _, val := range chars {
 		switch val {
 		case p.keymap.up:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 			p.velocity.y--
 		case p.keymap.down:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 			p.velocity.y++
 		case p.keymap.left:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 			p.velocity.x--
 		case p.keymap.right:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
 			p.velocity.x++
 		}
 	}
@@ -48,5 +46,6 @@ func (p *Player) move(chars []uint8) {
 }
 
 func (p *Player) draw() {
+	fmt.Printf("\033[%d;%dH ", p.lastPos.y, p.lastPos.x)
 	fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
 }

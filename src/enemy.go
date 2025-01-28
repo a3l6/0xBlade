@@ -3,13 +3,15 @@ package main
 import "fmt"
 
 type Enemy struct {
-	pos    Vector2
-	player *Player
-	sprite string
-	vel    Vector2
-	damage uint
-	health int
-	id     int
+	pos        fVector2
+	lastPos    fVector2
+	player     *Player
+	sprite     string
+	vel        Vector2
+	damage     uint
+	health     int
+	id         int
+	creationId int
 }
 
 func (e *Enemy) collision(obj int) {
@@ -40,25 +42,38 @@ func (e *Enemy) Step() {
 
 	}*/
 	if gameManager.ptrPlayer != nil {
-		e.pos.x = gameManager.ptrPlayer.pos.x - 1
+		const speed = .5
+		e.lastPos = e.pos
+		if gameManager.ptrPlayer.pos.x > int(e.pos.x) {
+			e.pos.x += speed
+		} else if gameManager.ptrPlayer.pos.x < int(e.pos.x) {
+			e.pos.x -= speed
+		} else {
+		}
+
+		if gameManager.ptrPlayer.pos.y > int(e.pos.y) {
+			e.pos.y += speed
+		} else if gameManager.ptrPlayer.pos.y < int(e.pos.y) {
+			e.pos.y -= speed
+		} else {
+		}
 	} else {
-		gameManager.writeToConsole("PLAYER", "NIL")
+		//gameManager.writeToConsole("PLAYER", "NIL")
 	}
-	//gameManager.writeToConsole("POS", fmt.Sprintf("%d %d", gameManager.ptrPlayer.pos.x, gameManager.ptrPlayer.pos.y))
-	gameManager.writeToConsole("2POS", fmt.Sprintf("%d %d", e.pos.x, e.pos.y))
-	//gameManager.console["POS"] = fmt.Sprintf("%d %d", gameManager.ptrPlayer.pos.x, gameManager.ptrPlayer.pos.y)
-	//gameManager.console["2POS"] = fmt.Sprintf("%d %d", e.pos.x, e.pos.y)
-	coord := gameManager.getCoordinate(e.pos)
+	coord := gameManager.getCoordinate(Vector2{x: int(e.pos.x), y: int(e.pos.y)})
 	if coord == GRENADE {
-		gameManager.writeToConsole("DIED", "TRUE")
-		//gameManager.console["DIED"] = "TRUE"
+		gameManager.killEnemy(e.id, e.creationId)
 	}
 
 }
 
 func (enemy *Enemy) draw() {
 	fmt.Printf("\033[s")
-	fmt.Printf("\033[%d;%dH%s", enemy.pos.y, enemy.pos.x, enemy.sprite)
+	if enemy.lastPos != (fVector2{x: 0, y: 0}) {
+		fmt.Printf("\033[%d;%dH ", int(enemy.lastPos.y), int(enemy.lastPos.x))
+	}
+
+	fmt.Printf("\033[%d;%dH%s", int(enemy.pos.y), int(enemy.pos.x), enemy.sprite)
 	fmt.Printf("\033[u")
 
 }

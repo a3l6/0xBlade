@@ -24,7 +24,8 @@ type GameManager struct {
 	ptrPlayer *Player
 
 	occupiedCoordinates map[Vector2]int
-	mu                  sync.Mutex
+	muCoords            sync.Mutex
+	muConsole           sync.Mutex
 }
 
 const PERMANENT int = -1
@@ -34,10 +35,13 @@ const ENEMY int = 2
 const GRENADE int = 3
 
 func (g *GameManager) getCoordinate(pos Vector2) int {
+	g.muCoords.Lock()
+	defer g.muCoords.Unlock()
 	return g.occupiedCoordinates[pos]
 }
 
 func (g *GameManager) setCoordinate(pos Vector2, master int) {
+	g.muCoords.Lock()
 	current := g.occupiedCoordinates[pos]
 	if current == NOT_FOUND {
 		g.occupiedCoordinates[pos] = master
@@ -49,6 +53,8 @@ func (g *GameManager) setCoordinate(pos Vector2, master int) {
 		g.occupiedCoordinates[pos] = master
 	} else {
 	}
+
+	g.muCoords.Unlock()
 }
 
 // Registers with Game manager and returns unique id.
@@ -74,7 +80,7 @@ func (g *GameManager) createNewGrenade(pos Vector2) error {
 func (g *GameManager) createNewEnemy(pos Vector2, ptrPlayer *Player) error {
 	//  100 is max for enemies
 	if g.numEnemies != 100 {
-		g.enemies[g.numEnemies] = Enemy{pos: pos, player: ptrPlayer, sprite: "?", vel: Vector2{0, 0}, damage: 0, health: 100}
+		g.enemies[g.numEnemies] = Enemy{pos: fVector2{x: float32(pos.x), y: float32(pos.y)}, player: ptrPlayer, sprite: "?", vel: Vector2{0, 0}, damage: 0, health: 100, creationId: int(g.numEnemies)}
 		g.enemies[g.numEnemies].id = g.registerAsObject(&g.enemies[g.numEnemies])
 		g.numEnemies++
 		return nil
@@ -109,15 +115,15 @@ func (g *GameManager) deleteObject(id int, creationID uint8) {
 }
 
 func (g *GameManager) writeToConsole(key string, val string) {
-	g.mu.Lock()
+	g.muConsole.Lock()
 	g.console[key] = val
-	g.mu.Unlock()
+	g.muConsole.Unlock()
 }
 
 func (g *GameManager) read(key string) string {
-	g.mu.Lock()
+	g.muConsole.Lock()
 	x := g.console[key]
-	g.mu.Unlock()
+	g.muConsole.Unlock()
 	return x
 }
 
@@ -130,12 +136,12 @@ func (g *GameManager) drawScreen() {
 	}
 
 	fmt.Printf("\033[s")
-	g.mu.Lock()
+	g.muConsole.Lock()
 	var console string
 	for key, val := range g.console {
 		console += fmt.Sprintf("%s : %s", key, val)
 	}
-	g.mu.Unlock()
+	g.muConsole.Unlock()
 	fmt.Printf("\033[%d;%dH", 47, 0)
 	fmt.Printf("\033[2K")
 	fmt.Printf("%s", console)
