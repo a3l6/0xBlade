@@ -1,78 +1,70 @@
 package main
 
-import (
-	"errors"
-	"fmt"
-)
-
-
-type Level struct {
-	sprite []string
-	upperBound int
-	lowerBound int
-	leftBound int
-	rightBound int
-<<<<<<< HEAD
-	level      [][]LevelChar
-}
-
-const Level_ID uint8 = 0
-const Player_ID uint8 = 1
-const Grenade_ID uint8 = 2
-const Enemy_ID uint8 = 3
+import "errors"
 
 type LevelChar struct {
-	char   uint8 // ASCII value
-	master uint8
+	char   rune
+	master int
 }
 
-// Sets LevelChar at some coordinate. Does not render.
-func (l *Level) print(master uint8, char uint8, x uint8, y uint8) error {
-	// Bounds check
-	if x > l.width || y > l.height {
-		return errors.New("x or y value is out of bounds")
+func StringToLevelChar(master int, a string) []LevelChar {
+	output := make([]LevelChar, len(a))
+	for idx, val := range a {
+		output[idx] = LevelChar{master: master, char: val}
+	}
+	return output
+}
+
+type Level struct {
+	upperBound int
+	lowerBound int
+	leftBound  int
+	rightBound int
+	sprite     []string
+	level      [windowHeight][windowWidth]LevelChar
+}
+
+func (l *Level) println(y int, chars []LevelChar) error {
+	if len(chars) != int(windowWidth) {
+		return errors.New("line exceeds max width")
+	}
+	if y < 0 || y >= int(windowHeight) {
+		return errors.New("y index out of bounds")
 	}
 
-	l.level[y][x] = LevelChar{char: char, master: master}
+	copy(l.level[y][:], chars)
 	return nil
 }
 
-// Sets line of LevelChars. Does not render.
-func (l *Level) println(master uint8, chars string, y uint8) error {
-
-	// Checking for max uint8
-	if y > 255 {
-		return errors.New("x or y value is too big")
+func (l *Level) print(pos Vector2, char LevelChar) error {
+	if pos.x >= int(windowWidth) || pos.y >= int(windowHeight) {
+		return errors.New("position out of bounds")
 	}
-	if len(chars) != int(l.width) {
-		return errors.New("string value needs to be the same as the level width")
+	if char.master != -1 {
+		gameManager.sendCollision(char.master, l.level[pos.y][pos.x].master)
 	}
-
-	var output []LevelChar
-	for _, val := range chars {
-		char := uint8(val)
-		lc := LevelChar{char: char, master: master}
-		output = append(output, lc)
-	}
-	l.level[y] = output
+	l.level[pos.y][pos.x] = char
 	return nil
 }
 
-// Converts ALL rows to strings and prints in parallel.
-func (l *Level) render() {
-
-}
-
-// Converts ONE row to a string and returns
-func (l *Level) renderln() string {
-	return ""
-=======
->>>>>>> parent of 896a7a0 (Started on new level)
-}
-
-func (l *Level) draw() {
-	fmt.Printf("\033[s")
-	for idx, val := range l.sprite {
-		fmt.Printf("\033[%d;%dH%s", idx, 0, val)
+// Prints multiple chars. Assuming its all on ONE line!
+func (l *Level) printM(pos Vector2, chars []LevelChar) error {
+	for idx, val := range chars {
+		newPos := Vector2{x: pos.x + idx, y: pos.y}
+		err := l.print(newPos, val)
+		if err != nil {
+			return err
+		}
 	}
-	fmt.Printf("\033[u")}
+	return nil
+}
+
+func (l *Level) render() []string {
+	output := make([]string, windowHeight)
+	for idx, val := range l.level {
+		for _, val := range val {
+			output[idx] += string(val.char)
+		}
+	}
+	return output
+}

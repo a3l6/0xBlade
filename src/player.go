@@ -1,52 +1,44 @@
 package main
 
-import "fmt"
-
 type Player struct {
 	pos      Vector2
 	velocity Vector2
-	sprite   string
-	l        *Level
-	keymap   Keymap
+	sprite   rune
+	id       int
 }
 
-func (p *Player) move(chars []uint8) {
-	for _, val := range chars {
-		switch val {
-		case p.keymap.up:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-			p.velocity.y--
-		case p.keymap.down:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-			p.velocity.y++
-		case p.keymap.left:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-			p.velocity.x--
-		case p.keymap.right:
-			fmt.Printf("\033[%d;%dH ", p.pos.y, p.pos.x)
-			p.velocity.x++
-		}
+func (p *Player) Move(buf []byte) {
+	switch buf[0] {
+	case keymap.up:
+		p.velocity.y--
+	case keymap.down:
+		p.velocity.y++
+	case keymap.left:
+		p.velocity.x--
+	case keymap.right:
+		p.velocity.x++
 	}
 
 	newPos := addVector2(p.pos, p.velocity)
-	if newPos.x < (*p.l).leftBound {
+	if newPos.x < level.leftBound {
 		newPos.x++
 	}
-	if newPos.x > (*p.l).rightBound {
+	if newPos.x > level.rightBound {
 		newPos.x--
 	}
-	if newPos.y < (*p.l).upperBound {
+	if newPos.y < level.upperBound {
 		newPos.y++
 	}
-	if newPos.y > (*p.l).lowerBound {
+	if newPos.y > level.lowerBound {
 		newPos.y--
 	}
 
 	p.pos = newPos
 	p.velocity = Vector2{x: 0, y: 0}
-
 }
 
-func (p *Player) draw() {
-	fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
+func (p *Player) collision() {}
+
+func (p *Player) Draw() {
+	level.print(p.pos, LevelChar{master: p.id, char: p.sprite})
 }
