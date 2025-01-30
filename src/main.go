@@ -16,19 +16,18 @@ const windowHeight uint8 = 45
 const windowWidth uint16 = 95 * 2
 
 var gameManager GameManager = GameManager{
-	drawable: make(map[int]*GameObject),
-	console:  make(map[string]string),
+	drawable:            make(map[int]*GameObject),
+	console:             make(map[string]string),
+	occupiedCoordinates: make(map[Vector2]int),
 }
-var l [windowHeight][windowWidth]LevelChar
+var keymap Keymap = Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 var level *Level = &Level{
 	sprite:     make([]string, windowHeight),
 	upperBound: 2,
 	lowerBound: 42,
 	rightBound: 140,
 	leftBound:  60,
-	height:     windowHeight,
-	width:      windowWidth,
-	level:      l}
+}
 
 func main() {
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
@@ -52,7 +51,6 @@ func main() {
 
 		buf := make([]byte, 3)
 
-		keymap := Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", keymap: keymap}
 
 		sprite, err := contentsOfFile("src/level.txt")
@@ -81,12 +79,15 @@ func main() {
 				start := time.Now()
 				_, err := os.Stdin.Read(buf)
 				if err != nil {
+					term.Restore(int(os.Stdin.Fd()), oldState)
+
 					log.Fatal(err)
 					panic(err)
 				}
 				player.move(buf)
 
-				gameManager.console["buf"] = "\"" + string(buf) + "\""
+				//gameManager.console["buf"] = "\"" + string(buf) + "\""
+				gameManager.writeToConsole("buf", fmt.Sprintf("\"%s\"", string(buf)))
 				if buf[0] == ' ' {
 					err = gameManager.createNewGrenade(player.pos)
 					if err != nil {
@@ -119,10 +120,10 @@ func main() {
 
 		level.draw()
 
-		level.id = gameManager.registerAsObject(level)
+		//level.id = gameManager.registerAsObject(level)
 		player.id = gameManager.registerAsObject(player)
 
-		gameManager.createNewEnemy(player.pos, player)
+		gameManager.createNewEnemy(Vector2{70, 4}, player)
 
 		const fps = 10
 		frameDuration := time.Second / fps
@@ -131,27 +132,15 @@ func main() {
 
 		for {
 			start := time.Now()
-
+			gameManager.ptrPlayer = player
 			gameManager.StepAll()
 
 			if buf[0] == 'q' {
 				return
 			}
-			if buf[0] == 'e' {
-				fileName := "output.txt"
-				data := strings.Join(level.render(), "\n")
-				file, err := os.Create(fileName)
-				if err != nil {
-					fmt.Println("Cannot create file! ", err)
-					return
-				}
-				defer file.Close()
 
-				_, err = file.WriteString(data)
-
-				if err != nil {
-					fmt.Println("Error writing to file, ", err)
-				}
+			if buf[0] == 'r' {
+				writeToFile("output1.txt", fmt.Sprint(gameManager.occupiedCoordinates))
 			}
 
 			elapsed := time.Since(start)

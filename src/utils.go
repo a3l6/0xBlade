@@ -20,6 +20,21 @@ func Max(a int, b int) int {
 	return b
 }
 
+func writeToFile(filename string, content string) {
+	file, err := os.Create(filename)
+	if err != nil {
+		fmt.Println("Cannot create file! ", err)
+		return
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(content)
+
+	if err != nil {
+		fmt.Println("Error writing to file, ", err)
+	}
+}
+
 func contentsOfFile(filename string) ([]string, error) {
 	file, err := os.Open(filename)
 	if err != nil {

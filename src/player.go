@@ -10,10 +10,6 @@ type Player struct {
 	id       int
 }
 
-func (p *Player) collision(obj int) {
-	// empty for now
-}
-
 func (p *Player) move(chars []uint8) {
 	for _, val := range chars {
 		switch val {
@@ -52,6 +48,5 @@ func (p *Player) move(chars []uint8) {
 }
 
 func (p *Player) draw() {
-	level.print(p.id, p.sprite[0], uint8(p.pos.x), uint8(p.pos.y))
-	//fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
+	fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
 }

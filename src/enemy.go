@@ -1,6 +1,6 @@
 package main
 
-//imporf "fmt"
+import "fmt"
 
 type Enemy struct {
 	pos    Vector2
@@ -19,29 +19,41 @@ func (e *Enemy) collision(obj int) {
 
 // Simple movement towards player
 func (e *Enemy) Step() {
-	if e.player != nil {
-		if e.player.pos.y > e.pos.y {
+	/*if gameManager.ptrPlayer != nil {
+		if gameManager.ptrPlayer.pos.y > e.pos.y {
 			e.vel.y++
-		} else if e.player.pos.y < e.pos.y {
+		} else if gameManager.ptrPlayer.pos.y < e.pos.y {
 			e.vel.x--
 		}
 
-		if e.player.pos.x > e.pos.x {
+		if gameManager.ptrPlayer.pos.x+1 > e.pos.x {
 			e.vel.x++
-		} else if e.player.pos.x < e.pos.x {
+		} else if gameManager.ptrPlayer.pos.x+1 < e.pos.x {
 			e.vel.x--
 		}
 
 		e.pos = addVector2(e.pos, e.vel)
+
+		if gameManager.ptrPlayer.pos == e.pos {
+			e.pos = addVector2(e.pos, Vector2{x: 1, y: 1})
+		}
+
+	}*/
+
+	gameManager.writeToConsole("POS", fmt.Sprintf("%d %d", gameManager.ptrPlayer.pos.x, gameManager.ptrPlayer.pos.y))
+	//gameManager.console["POS"] = fmt.Sprintf("%d %d", gameManager.ptrPlayer.pos.x, gameManager.ptrPlayer.pos.y)
+	//gameManager.console["2POS"] = fmt.Sprintf("%d %d", e.pos.x, e.pos.y)
+	coord := gameManager.getCoordinate(e.pos)
+	if coord == GRENADE {
+		gameManager.writeToConsole("DIED", "TRUE")
+		//gameManager.console["DIED"] = "TRUE"
 	}
 
 }
 
 func (enemy Enemy) draw() {
-	level.print(enemy.id, enemy.sprite[0], uint8(enemy.pos.x), uint8(enemy.pos.y))
-
-	//fmt.Printf("\033[s")
-	//fmt.Printf("\033[%d;%dH%s", enemy.pos.y, enemy.pos.x, enemy.sprite)
-	//fmt.Printf("\033[u")
+	fmt.Printf("\033[s")
+	fmt.Printf("\033[%d;%dH%s", enemy.pos.y, enemy.pos.x, enemy.sprite)
+	fmt.Printf("\033[u")
 
 }

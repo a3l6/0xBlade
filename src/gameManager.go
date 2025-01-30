@@ -3,11 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 type GameObject interface {
 	draw()
-	collision(int)
 }
 
 type GameManager struct {
@@ -20,6 +20,35 @@ type GameManager struct {
 
 	enemies    [100]Enemy
 	numEnemies uint8
+
+	ptrPlayer *Player
+
+	occupiedCoordinates map[Vector2]int
+	mu                  sync.Mutex
+}
+
+const PERMANENT int = -1
+const NOT_FOUND int = 0
+const PLAYER int = 1
+const ENEMY int = 2
+const GRENADE int = 3
+
+func (g *GameManager) getCoordinate(pos Vector2) int {
+	return g.occupiedCoordinates[pos]
+}
+
+func (g *GameManager) setCoordinate(pos Vector2, master int) {
+	current := g.occupiedCoordinates[pos]
+	if current == NOT_FOUND {
+		g.occupiedCoordinates[pos] = master
+	} else if master == NOT_FOUND {
+		g.occupiedCoordinates[pos] = master
+	} else if current == ENEMY && master == GRENADE {
+		g.occupiedCoordinates[pos] = master
+	} else if current == PLAYER && master == ENEMY {
+		g.occupiedCoordinates[pos] = master
+	} else {
+	}
 }
 
 // Registers with Game manager and returns unique id.
@@ -54,6 +83,11 @@ func (g *GameManager) createNewEnemy(pos Vector2, ptrPlayer *Player) error {
 	}
 }
 
+func (g *GameManager) killEnemy(id int, creationID int) {
+	delete(g.drawable, id)
+	g.enemies[creationID] = Enemy{}
+}
+
 // Run all objects that have a step function.
 // No array of stepable stuff, just manually add a new one.
 // Make sure to call at a specific frame rate .
@@ -73,44 +107,35 @@ func (g *GameManager) deleteObject(id int, creationID uint8) {
 	g.grenades[creationID] = Grenade{pos: Vector2{0, 0}, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, creationID: g.numGrenades}
 }
 
-func (g GameManager) NewCollision(master int, existing int) {
-	// Collision with level
-	if existing == 0 {
-		return
-	}
+func (g *GameManager) writeToConsole(key string, val string) {
+	g.mu.Lock()
+	g.console[key] = val
+	g.mu.Unlock()
+}
 
-	(*g.drawable[int(existing)]).collision(master)
+func (g *GameManager) read(key string) string {
+	g.mu.Lock()
+	x := g.console[key]
+	g.mu.Unlock()
+	return x
 }
 
 func (g *GameManager) drawScreen() {
 
-	for _, obj := range g.drawable {
-		(*obj).draw()
+	// See README.md #1 for explanation of why this over usual for loop
+	// FUTURE ME: don't change to traditional for loop unless absolutely necessary
+	for _, val := range g.drawable {
+		(*val).draw()
 	}
 
 	fmt.Printf("\033[s")
-	fmt.Printf("\033[2J")
-	l := level.render()
-	for idx, val := range l {
-		fmt.Printf("\033[%d;%dH%s", idx, 0, val)
-
+	var console string
+	for key, val := range g.console {
+		console += fmt.Sprintf("%s : %s", key, val)
 	}
+	fmt.Printf("\033[%d;%dH", 47, 0)
+	fmt.Printf("\033[2K")
+	fmt.Printf("%s", console)
 	fmt.Printf("\033[u")
-	/*
-		// See README.md #1 for explanation of why this over usual for loop
-		// FUTURE ME: don't change to traditional for loop unless absolutely necessary
-		for _, val := range g.drawable {
-			(*val).draw()
-		}
-
-		fmt.Printf("\033[s")
-		var console string
-		for key, val := range g.console {
-			console += fmt.Sprintf("%s : %s", key, val)
-		}
-		fmt.Printf("\033[%d;%dH", 47, 0)
-		fmt.Printf("\033[2K")
-		fmt.Printf("%s", console)
-		fmt.Printf("\033[u")
-		//g.console = make(map[string]string) */
+	//g.console = make(map[string]string)
 }
