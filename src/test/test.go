@@ -17,6 +17,8 @@ import (
 	"syscall"
 	"time"
 
+
+
 	"golang.org/x/term"
 )
 
@@ -115,23 +117,53 @@ func main() {
 		//binary.Read(bytes.NewReader(b[20:]), binary.LittleEndian, &value)
 		//fmt.Printf("type: %x\ncode: %d\nvalue: %d\n", typ, code, value)
 	}
-
 }*/
 
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
-	"unsafe"
+	"golang.org/x/term"
+	"os"
 )
 
-type foo struct {
-	x uint8
-	y uint8
+type Player struct {
+	x, y   int
+	sprite rune
 }
 
 func main() {
-	bar := foo{}
 
-	fmt.Println(unsafe.Sizeof(bar))
+	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	if err != nil {
+		panic(err)
+	}
+	defer term.Restore(int(os.Stdin.Fd()), oldState)
+
+	width, height, err := term.GetSize(int(os.Stdout.Fd()))
+	if err != nil {
+		panic(err)
+	}
+	b := bytes.Buffer{}
+	var screen = bufio.NewWriterSize(os.Stdout, width*height)
+	i := 0
+	buf := make([]byte, 1)
+	go func() {
+		for {
+			_, err := os.Stdin.Read(buf)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}()
+	for {
+		i++
+		if buf[0] == 'q' {
+			return
+		}
+		os.OpenFile()
+		b.WriteTo(screen)
+	}
 }

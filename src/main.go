@@ -22,7 +22,6 @@ var gameManager GameManager = GameManager{
 }
 var keymap Keymap = Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 var level *Level = &Level{
-	sprite:     make([]string, windowHeight),
 	upperBound: 2,
 	lowerBound: 42,
 	rightBound: 140,
@@ -49,7 +48,7 @@ func main() {
 	switch mode {
 	case "main":
 
-		buf := make([]byte, 3)
+		buf := make([]byte, 1)
 
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", keymap: keymap}
 
@@ -57,9 +56,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		level.sprite = sprite
 
-		fileName := "level1.txt"
+		level.sprite = strings.Join(sprite, "\r\n")
+
+		/*fileName := "level1.txt"
 		data := strings.Join(level.sprite, "\n")
 		file, err := os.Create(fileName)
 		if err != nil {
@@ -71,7 +71,7 @@ func main() {
 		_, err = file.WriteString(data)
 		if err != nil {
 			fmt.Println("Error writing to file, ", err)
-		}
+		}*/
 
 		handleInputs := func() {
 			frameDuration := time.Second / 120

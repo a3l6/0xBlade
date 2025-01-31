@@ -128,7 +128,8 @@ func (g *GameManager) read(key string) string {
 }
 
 func (g *GameManager) drawScreen() {
-
+	fmt.Printf("\033[2J")
+	level.draw()
 	// See README.md #1 for explanation of why this over usual for loop
 	// FUTURE ME: don't change to traditional for loop unless absolutely necessary
 	for _, val := range g.drawable {
