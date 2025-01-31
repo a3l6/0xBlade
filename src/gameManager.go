@@ -92,8 +92,9 @@ func (g *GameManager) killEnemy(id int, creationID int) {
 // No array of stepable stuff, just manually add a new one.
 // Make sure to call at a specific frame rate .
 func (g *GameManager) StepAll() {
-	for _, val := range g.enemies {
-		val.Step()
+	for idx := range g.enemies {
+		// keep as this cause using val just edits the copy
+		g.enemies[idx].Step()
 	}
 
 	for idx := range g.grenades {
@@ -129,10 +130,12 @@ func (g *GameManager) drawScreen() {
 	}
 
 	fmt.Printf("\033[s")
+	g.mu.Lock()
 	var console string
 	for key, val := range g.console {
 		console += fmt.Sprintf("%s : %s", key, val)
 	}
+	g.mu.Unlock()
 	fmt.Printf("\033[%d;%dH", 47, 0)
 	fmt.Printf("\033[2K")
 	fmt.Printf("%s", console)

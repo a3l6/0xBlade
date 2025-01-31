@@ -39,8 +39,13 @@ func (e *Enemy) Step() {
 		}
 
 	}*/
-
-	gameManager.writeToConsole("POS", fmt.Sprintf("%d %d", gameManager.ptrPlayer.pos.x, gameManager.ptrPlayer.pos.y))
+	if gameManager.ptrPlayer != nil {
+		e.pos.x = gameManager.ptrPlayer.pos.x - 1
+	} else {
+		gameManager.writeToConsole("PLAYER", "NIL")
+	}
+	//gameManager.writeToConsole("POS", fmt.Sprintf("%d %d", gameManager.ptrPlayer.pos.x, gameManager.ptrPlayer.pos.y))
+	gameManager.writeToConsole("2POS", fmt.Sprintf("%d %d", e.pos.x, e.pos.y))
 	//gameManager.console["POS"] = fmt.Sprintf("%d %d", gameManager.ptrPlayer.pos.x, gameManager.ptrPlayer.pos.y)
 	//gameManager.console["2POS"] = fmt.Sprintf("%d %d", e.pos.x, e.pos.y)
 	coord := gameManager.getCoordinate(e.pos)
@@ -51,7 +56,7 @@ func (e *Enemy) Step() {
 
 }
 
-func (enemy Enemy) draw() {
+func (enemy *Enemy) draw() {
 	fmt.Printf("\033[s")
 	fmt.Printf("\033[%d;%dH%s", enemy.pos.y, enemy.pos.x, enemy.sprite)
 	fmt.Printf("\033[u")
