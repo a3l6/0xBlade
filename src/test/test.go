@@ -122,8 +122,6 @@ func main() {
 package main
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
 	"golang.org/x/term"
 	"os"
@@ -134,8 +132,12 @@ type Player struct {
 	sprite rune
 }
 
-func main() {
+func print(buffer []byte, str []byte) []byte {
+	copy(buffer, str)
+	return buffer
+}
 
+func main() {
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		panic(err)
@@ -146,9 +148,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	b := bytes.Buffer{}
-	var screen = bufio.NewWriterSize(os.Stdout, width*height)
-	i := 0
+
+	level, err := os.ReadFile("level.txt")
+	if err != nil {
+		panic(err)
+	}
+
+	currbuffer := make([]byte, width*height)
+	prevbuffer := make([]byte, width*height)
+
 	buf := make([]byte, 1)
 	go func() {
 		for {
@@ -158,12 +166,28 @@ func main() {
 			}
 		}
 	}()
+
+	j := 1
+	for idx := range currbuffer {
+		currbuffer[idx] = ' '
+	}
+	print(currbuffer, level)
 	for {
-		i++
+
+		currbuffer[j%width] = '#' // Simple moving object
+		j++
 		if buf[0] == 'q' {
 			return
 		}
-		os.OpenFile()
-		b.WriteTo(screen)
+
+		for i := range currbuffer {
+			if currbuffer[i] != prevbuffer[i] {
+				x, y := i%width, i/width
+				fmt.Printf("\033[%d;%dH%c", y+1, x+1, currbuffer[i])
+			}
+		}
+
+		copy(prevbuffer, currbuffer) // Save state for next frame
+
 	}
 }
