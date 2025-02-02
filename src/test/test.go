@@ -19,6 +19,7 @@ import (
 
 
 
+
 	"golang.org/x/term"
 )
 
@@ -122,6 +123,7 @@ func main() {
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"golang.org/x/term"
 	"os"
@@ -130,6 +132,36 @@ import (
 type Player struct {
 	x, y   int
 	sprite rune
+}
+
+func generateBG() [45 * 95 * 2]byte {
+	const width = 95 * 2
+	const height = 45
+
+	var bg [width * height]byte
+	for i := 0; i < len(bg); i += 2 {
+		bg[i] = '#'
+		bg[i+1] = ' '
+	}
+	fmt.Println(len(bg))
+	emptySpace := bytes.Repeat([]byte{' ', ' '}, 40)
+	offset := (width - len(emptySpace)) / 2
+	for i := offset + (2 * width); i <= len(bg)-2*width; i += width {
+		copy(bg[i:], emptySpace)
+	}
+
+	return bg
+}
+
+func arrayBytesToStr(arr [45 * 95 * 2]byte) string {
+	var str string
+	for i := 0; i < len(arr); i++ {
+		if i%(95*2) == 0 {
+			str += "\r\n"
+		}
+		str += string(arr[i])
+	}
+	return str
 }
 
 func print(buffer []byte, str []byte) []byte {
@@ -149,10 +181,10 @@ func main() {
 		panic(err)
 	}
 
-	level, err := os.ReadFile("level.txt")
-	if err != nil {
-		panic(err)
-	}
+	//level, err := os.ReadFile("level.txt")
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	currbuffer := make([]byte, width*height)
 	prevbuffer := make([]byte, width*height)
@@ -168,13 +200,12 @@ func main() {
 	}()
 
 	j := 1
-	for idx := range currbuffer {
-		currbuffer[idx] = ' '
-	}
-	print(currbuffer, level)
+
+	bg := generateBG()
+	copy(currbuffer[:], bg[:])
 	for {
 
-		currbuffer[j%width] = '#' // Simple moving object
+		//	currbuffer[j%width] = '#' // Simple moving object
 		j++
 		if buf[0] == 'q' {
 			return
