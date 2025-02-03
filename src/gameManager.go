@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"sync"
@@ -10,7 +11,12 @@ type GameObject interface {
 	draw()
 }
 
+var spaceBuffer = [windowWidth * 2 * windowHeight]byte(bytes.Repeat([]byte{' '}, windowWidth*2*windowHeight))
+
 type GameManager struct {
+	CurrBuffer [windowWidth * 2 * windowHeight]byte
+	prevBuffer [windowWidth * 2 * windowHeight]byte
+
 	drawable map[int]*GameObject
 	count    int
 	console  map[string]string
@@ -127,25 +133,47 @@ func (g *GameManager) read(key string) string {
 	return x
 }
 
+// Calls Drawable.Draw methods.
+// Compares buffer and only prints diff.
 func (g *GameManager) drawScreen() {
-	fmt.Printf("\033[2J")
-	level.draw()
-	// See README.md #1 for explanation of why this over usual for loop
-	// FUTURE ME: don't change to traditional for loop unless absolutely necessary
+	// See README.md #1 for explanation of why this is used over bare for loop
+	// FUTURE ME: Don't change this to traditional loop
+
+	// TODO: Change this to a blank level buffer
+	copy(g.CurrBuffer[:], spaceBuffer[:])
+
 	for _, val := range g.drawable {
 		(*val).draw()
 	}
 
-	fmt.Printf("\033[s")
-	g.muConsole.Lock()
-	var console string
-	for key, val := range g.console {
-		console += fmt.Sprintf("%s : %s", key, val)
+	for i := range g.CurrBuffer {
+		if g.CurrBuffer[i] != g.prevBuffer[i] {
+			x, y := i%windowWidth, i/windowWidth
+			fmt.Printf("\033[%d;%dH%c", y+1, x+1, g.CurrBuffer[i])
+		}
 	}
-	g.muConsole.Unlock()
-	fmt.Printf("\033[%d;%dH", 47, 0)
-	fmt.Printf("\033[2K")
-	fmt.Printf("%s", console)
-	fmt.Printf("\033[u")
-	//g.console = make(map[string]string)
+	// TODO: Make elegant handling of console
+	// Another window would be really nice
+	copy(g.prevBuffer[:], g.CurrBuffer[:])
+	/*
+		fmt.Printf("\033[2J")
+		level.draw()
+		// See README.md #1 for explanation of why this over usual for loop
+		// FUTURE ME: don't change to traditional for loop unless absolutely necessary
+		for _, val := range g.drawable {
+			(*val).draw()
+		}
+
+		fmt.Printf("\033[s")
+		g.muConsole.Lock()
+		var console string
+		for key, val := range g.console {
+			console += fmt.Sprintf("%s : %s", key, val)
+		}
+		g.muConsole.Unlock()
+		fmt.Printf("\033[%d;%dH", 47, 0)
+		fmt.Printf("\033[2K")
+		fmt.Printf("%s", console)
+		fmt.Printf("\033[u")
+		//g.console = make(map[string]string) */
 }

@@ -201,11 +201,11 @@ func main() {
 
 	j := 1
 
-	bg := generateBG()
-	copy(currbuffer[:], bg[:])
+	//bg := generateBG()
+	//copy(currbuffer[:], bg[:])
 	for {
 
-		//	currbuffer[j%width] = '#' // Simple moving object
+		currbuffer[j%width] = '#' // Simple moving object
 		j++
 		if buf[0] == 'q' {
 			return

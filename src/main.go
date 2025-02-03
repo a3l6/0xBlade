@@ -12,8 +12,8 @@ import (
 	"golang.org/x/term"
 )
 
-const windowHeight uint8 = 45
-const windowWidth uint16 = 95 * 2
+const windowHeight int = 45
+const windowWidth int = 95 * 2
 
 var gameManager GameManager = GameManager{
 	drawable:            make(map[int]*GameObject),

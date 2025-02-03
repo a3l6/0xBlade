@@ -1,12 +1,10 @@
 package main
 
-import "fmt"
-
 type Enemy struct {
 	pos        fVector2
 	lastPos    fVector2
 	player     *Player
-	sprite     string
+	sprite     byte
 	vel        Vector2
 	damage     uint
 	health     int
@@ -68,12 +66,14 @@ func (e *Enemy) Step() {
 }
 
 func (enemy *Enemy) draw() {
-	fmt.Printf("\033[s")
+	if int(enemy.pos.x) <= windowWidth && int(enemy.pos.y) <= windowHeight {
+		gameManager.CurrBuffer[int(enemy.pos.x)*int(enemy.pos.y)] = enemy.sprite
+	}
+	/*fmt.Printf("\033[s")
 	if enemy.lastPos != (fVector2{x: 0, y: 0}) {
 		fmt.Printf("\033[%d;%dH ", int(enemy.lastPos.y), int(enemy.lastPos.x))
 	}
 
 	fmt.Printf("\033[%d;%dH%s", int(enemy.pos.y), int(enemy.pos.x), enemy.sprite)
-	fmt.Printf("\033[u")
-
+	fmt.Printf("\033[u")*/
 }
