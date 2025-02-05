@@ -11,7 +11,27 @@ type GameObject interface {
 	draw()
 }
 
-var spaceBuffer = [windowWidth * 2 * windowHeight]byte(bytes.Repeat([]byte{' '}, windowWidth*2*windowHeight))
+func generateBG() [45 * 95 * 2]byte {
+	const width = 95 * 2
+	const height = 45
+
+	var bg [width * height]byte
+	for i := 0; i < len(bg); i += 2 {
+		bg[i] = '#'
+		bg[i+1] = ' '
+	}
+	fmt.Println(len(bg))
+	emptySpace := bytes.Repeat([]byte{' ', ' '}, 40)
+	offset := (width - len(emptySpace)) / 2
+	for i := offset + (2 * width); i <= len(bg)-2*width; i += width {
+		copy(bg[i:], emptySpace)
+	}
+
+	return bg
+}
+
+// var spaceBuffer = [windowWidth * 2 * windowHeight]byte(bytes.Repeat([]byte{' '}, windowWidth*2*windowHeight))
+var spaceBuffer = generateBG()
 
 type GameManager struct {
 	CurrBuffer [windowWidth * 2 * windowHeight]byte
@@ -86,7 +106,15 @@ func (g *GameManager) createNewGrenade(pos Vector2) error {
 func (g *GameManager) createNewEnemy(pos Vector2, ptrPlayer *Player) error {
 	//  100 is max for enemies
 	if g.numEnemies != 100 {
-		g.enemies[g.numEnemies] = Enemy{pos: fVector2{x: float32(pos.x), y: float32(pos.y)}, player: ptrPlayer, sprite: "?", vel: Vector2{0, 0}, damage: 0, health: 100, creationId: int(g.numEnemies)}
+		g.enemies[g.numEnemies] = Enemy{
+			pos: fVector2{x: float32(pos.x),
+				y: float32(pos.y)},
+			player:     ptrPlayer,
+			sprite:     '?',
+			vel:        Vector2{0, 0},
+			damage:     0,
+			health:     100,
+			creationId: int(g.numEnemies)}
 		g.enemies[g.numEnemies].id = g.registerAsObject(&g.enemies[g.numEnemies])
 		g.numEnemies++
 		return nil

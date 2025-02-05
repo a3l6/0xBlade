@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type Player struct {
 	pos      Vector2
 	lastPos  Vector2
@@ -46,6 +44,7 @@ func (p *Player) move(chars []uint8) {
 }
 
 func (p *Player) draw() {
-	fmt.Printf("\033[%d;%dH ", p.lastPos.y, p.lastPos.x)
-	fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
+	copy(gameManager.CurrBuffer[windowWidth*p.pos.y+p.pos.x:], []byte(p.sprite))
+	//fmt.Printf("\033[%d;%dH ", p.lastPos.y, p.lastPos.x)
+	//fmt.Printf("\033[%d;%dH%s", p.pos.y, p.pos.x, p.sprite)
 }

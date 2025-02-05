@@ -67,7 +67,7 @@ func (e *Enemy) Step() {
 
 func (enemy *Enemy) draw() {
 	if int(enemy.pos.x) <= windowWidth && int(enemy.pos.y) <= windowHeight {
-		gameManager.CurrBuffer[int(enemy.pos.x)*int(enemy.pos.y)] = enemy.sprite
+		gameManager.CurrBuffer[windowWidth*int(enemy.pos.y)+int(enemy.pos.x)] = enemy.sprite
 	}
 	/*fmt.Printf("\033[s")
 	if enemy.lastPos != (fVector2{x: 0, y: 0}) {

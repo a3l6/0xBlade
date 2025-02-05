@@ -21,8 +21,8 @@ func (g *Grenade) draw() {
 	// TODO: Change to stepable code
 	// LEGACY CODE
 	fps := 10 // FPS here to make it run slower
-	switch g.step {
-	case 1 * fps:
+	switch {
+	case g.step == 1*fps:
 		g.pos.y -= 1 * g.amplitude
 		g.pos.x++
 		g.step++
@@ -30,31 +30,31 @@ func (g *Grenade) draw() {
 		g.pos.y -= 1 * g.amplitude
 		g.pos.x++
 		g.step++*/
-	case 2 * fps:
+	case g.step == 2*fps:
 		//fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y -= 2 * g.amplitude
 		g.pos.x++
 		g.step++
-	case 3 * fps:
+	case g.step == 3*fps:
 		//fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y += 2 * g.amplitude
 		g.pos.x++
 		g.step++
-	case 4 * fps:
+	case g.step == 4*fps:
 		//fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
 		g.pos.y += 1 * g.amplitude
 		g.pos.x++
 		sprite = g.sprite
 		g.step++
-	case 5 * fps:
+	case g.step >= 5*fps && g.step < 7*fps:
 		// TODO: Make grenade explosion random
 		// Just draws the thing
 		// Empty: "\0331A     \033[1B\033[4D     \033[1B\033[5D         \033[1B\033[5D   "
-		new_sprite := "\0331A   !#\033[1B\033[4D$#@#$\033[1B\033[5D #@$%$#$#\033[1B\033[5D!@#"
-		copy(gameManager.CurrBuffer[windowWidth*2*(g.pos.y-1)+g.pos.x+3:], []byte{'!', '#'})
-		copy(gameManager.CurrBuffer[windowWidth*2*g.pos.y+g.pos.x:], []byte{'$', '#', '@', '#', '$'})
-		copy(gameManager.CurrBuffer[windowWidth*2*(g.pos.y-1)+g.pos.x:], []byte{'#', '@', '$', '%', '$', '#', '$', '#'})
-		copy(gameManager.CurrBuffer[windowWidth*2*(g.pos.y-2)+g.pos.x+3:], []byte{'!', '@', '#'})
+		//new_sprite := "\0331A   !#\033[1B\033[4D$#@#$\033[1B\033[5D #@$%$#$#\033[1B\033[5D!@#"
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x+3:], []byte{'!', '#'})
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x+2:], []byte{'$', '#', '@', '#', '$'})
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+3:], []byte{'#', '@', '$', '%', '$', '#', '$', '#'})
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x+3:], []byte{'!', '@', '#'})
 		// Set coordinate
 		/*gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 3, y: 1}), GRENADE)
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 4, y: 1}), GRENADE)
@@ -72,21 +72,21 @@ func (g *Grenade) draw() {
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 5, y: -1}), GRENADE)
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 6, y: -1}), GRENADE)
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 7, y: -1}), GRENADE)
-		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 8, y: -1}), GRENADE)
+		gameManager.setCoordinate(addVector2(g.pos, Vecto22{x: 8, y: -1}), GRENADE)
 
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 3, y: -2}), GRENADE)
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 4, y: -2}), GRENADE)
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 5, y: -2}), GRENADE)
 		*/
-		sprite = new_sprite
+		//sprite = new_sprite
 		g.step++
-	case 6 * fps:
+	case g.step >= 7*fps && g.step < 8*fps:
 
-		new_sprite := "\0331A   ! \033[1B\033[4D @#@ \033[1B\033[5D  @#$%   \033[1B\033[5D * "
-		copy(gameManager.CurrBuffer[windowWidth*2*(g.pos.y-1)+g.pos.x+3:], []byte{'!'})
-		copy(gameManager.CurrBuffer[windowWidth*2*g.pos.y+g.pos.x+1:], []byte{'@', '#', '@'})
-		copy(gameManager.CurrBuffer[windowWidth*2*(g.pos.y-1)+g.pos.x:], []byte{'@', '#', '$', '%'})
-		copy(gameManager.CurrBuffer[windowWidth*2*(g.pos.y-2)+g.pos.x+3:], []byte{'*'})
+		//new_sprite := "\0331A   ! \033[1B\033[4D @#@ \033[1B\033[5D  @#$%   \033[1B\033[5D * "
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x+2:], []byte{'!'})
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x+4:], []byte{'@', '#', '@'})
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+3:], []byte{'@', '#', '$', '%'})
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x+3:], []byte{'*'})
 
 		// Reset
 		/*gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 3, y: 1}), NOT_FOUND)
@@ -123,9 +123,9 @@ func (g *Grenade) draw() {
 
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 5, y: -2}), GRENADE)
 		*/
-		sprite = new_sprite
+		//sprite = new_sprite`
 		g.step++
-	case 7 * fps:
+	case g.step == 8*fps:
 		/*new_sprite := "\0331A     \033[1B\033[4D     \033[1B\033[5D         \033[1B\033[5D   "
 
 		gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 3, y: 1}), NOT_FOUND)
@@ -142,15 +142,15 @@ func (g *Grenade) draw() {
 
 		sprite = new_sprite */
 		g.step++
-	case 11 * fps:
+	case g.step == 12*fps:
 		//gameManager.setCoordinate(g.pos, NOT_FOUND)
 		//fmt.Printf("\033[%d;%dH ", g.pos.y, g.pos.x)
-		//gameManager.deleteObject(g.id, g.creationID) // kill self
+		gameManager.deleteObject(g.id, g.creationID) // kill self
 	default:
 		g.step++
 	}
 	//gameManager.setCoordinate(g.pos, GRENADE)
-	copy(gameManager.CurrBuffer[windowWidth*2*g.pos.y+g.pos.x:], []byte(sprite))
+	copy(gameManager.CurrBuffer[windowWidth*g.pos.y+g.pos.x:], []byte(sprite))
 	//fmt.Printf("\033[%d;%dH%s", g.pos.y, g.pos.x, sprite)
 	//fmt.Printf("\033[u")
 }
