@@ -123,7 +123,7 @@ func main() {
 		//level.id = gameManager.registerAsObject(level)
 		player.id = gameManager.registerAsObject(player)
 
-		gameManager.createNewEnemy(Vector2{70, 4}, player)
+		gameManager.createNewEnemy(Vector2{70, 10}, player)
 
 		const fps = 10
 		frameDuration := time.Second / fps

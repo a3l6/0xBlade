@@ -53,7 +53,7 @@ func (g *Grenade) draw() {
 		//new_sprite := "\0331A   !#\033[1B\033[4D$#@#$\033[1B\033[5D #@$%$#$#\033[1B\033[5D!@#"
 		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x+3:], []byte{'!', '#'})
 		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x+2:], []byte{'$', '#', '@', '#', '$'})
-		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+3:], []byte{'#', '@', '$', '%', '$', '#', '$', '#'})
+		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+1:], []byte{'#', '@', '$', '%', '$', '#', '$', '#'})
 		copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x+3:], []byte{'!', '@', '#'})
 		// Set coordinate
 		/*gameManager.setCoordinate(addVector2(g.pos, Vector2{x: 3, y: 1}), GRENADE)

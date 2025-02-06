@@ -167,7 +167,6 @@ func (g *GameManager) drawScreen() {
 	// See README.md #1 for explanation of why this is used over bare for loop
 	// FUTURE ME: Don't change this to traditional loop
 
-	// TODO: Change this to a blank level buffer
 	copy(g.CurrBuffer[:], spaceBuffer[:])
 
 	for _, val := range g.drawable {

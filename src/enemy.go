@@ -58,14 +58,20 @@ func (e *Enemy) Step() {
 	} else {
 		//gameManager.writeToConsole("PLAYER", "NIL")
 	}
-	coord := gameManager.getCoordinate(Vector2{x: int(e.pos.x), y: int(e.pos.y)})
-	if coord == GRENADE {
-		gameManager.killEnemy(e.id, e.creationId)
-	}
+
+	/*
+		coord := gameManager.getCoordinate(Vector2{x: int(e.pos.x), y: int(e.pos.y)})
+		if coord == GRENADE {
+			gameManager.killEnemy(e.id, e.creationId)
+		}*/
 
 }
 
 func (enemy *Enemy) draw() {
+	characterOnCurrentPosition := gameManager.CurrBuffer[windowWidth*int(enemy.pos.y)+int(enemy.pos.x)]
+	if characterOnCurrentPosition != '?' && characterOnCurrentPosition != '&' && characterOnCurrentPosition != ' ' {
+		gameManager.killEnemy(enemy.id, enemy.creationId)
+	}
 	if int(enemy.pos.x) <= windowWidth && int(enemy.pos.y) <= windowHeight {
 		gameManager.CurrBuffer[windowWidth*int(enemy.pos.y)+int(enemy.pos.x)] = enemy.sprite
 	}
