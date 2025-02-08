@@ -16,9 +16,8 @@ const windowHeight int = 45
 const windowWidth int = 95 * 2
 
 var gameManager GameManager = GameManager{
-	drawable:            make(map[int]*GameObject),
-	console:             make(map[string]string),
-	occupiedCoordinates: make(map[Vector2]int),
+	drawable: make(map[int]*GameObject),
+	console:  make(map[string]string),
 }
 var keymap Keymap = Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 var level *Level = &Level{
@@ -137,10 +136,6 @@ func main() {
 
 			if buf[0] == 'q' {
 				return
-			}
-
-			if buf[0] == 'r' {
-				writeToFile("output1.txt", fmt.Sprint(gameManager.occupiedCoordinates))
 			}
 
 			elapsed := time.Since(start)

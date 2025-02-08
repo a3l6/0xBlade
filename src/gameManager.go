@@ -48,39 +48,6 @@ type GameManager struct {
 	numEnemies uint8
 
 	ptrPlayer *Player
-
-	occupiedCoordinates map[Vector2]int
-	muCoords            sync.Mutex
-	muConsole           sync.Mutex
-}
-
-const PERMANENT int = -1
-const NOT_FOUND int = 0
-const PLAYER int = 1
-const ENEMY int = 2
-const GRENADE int = 3
-
-func (g *GameManager) getCoordinate(pos Vector2) int {
-	g.muCoords.Lock()
-	defer g.muCoords.Unlock()
-	return g.occupiedCoordinates[pos]
-}
-
-func (g *GameManager) setCoordinate(pos Vector2, master int) {
-	g.muCoords.Lock()
-	current := g.occupiedCoordinates[pos]
-	if current == NOT_FOUND {
-		g.occupiedCoordinates[pos] = master
-	} else if master == NOT_FOUND {
-		g.occupiedCoordinates[pos] = master
-	} else if current == ENEMY && master == GRENADE {
-		g.occupiedCoordinates[pos] = master
-	} else if current == PLAYER && master == ENEMY {
-		g.occupiedCoordinates[pos] = master
-	} else {
-	}
-
-	g.muCoords.Unlock()
 }
 
 // Registers with Game manager and returns unique id.
@@ -182,25 +149,4 @@ func (g *GameManager) drawScreen() {
 	// TODO: Make elegant handling of console
 	// Another window would be really nice
 	copy(g.prevBuffer[:], g.CurrBuffer[:])
-	/*
-		fmt.Printf("\033[2J")
-		level.draw()
-		// See README.md #1 for explanation of why this over usual for loop
-		// FUTURE ME: don't change to traditional for loop unless absolutely necessary
-		for _, val := range g.drawable {
-			(*val).draw()
-		}
-
-		fmt.Printf("\033[s")
-		g.muConsole.Lock()
-		var console string
-		for key, val := range g.console {
-			console += fmt.Sprintf("%s : %s", key, val)
-		}
-		g.muConsole.Unlock()
-		fmt.Printf("\033[%d;%dH", 47, 0)
-		fmt.Printf("\033[2K")
-		fmt.Printf("%s", console)
-		fmt.Printf("\033[u")
-		//g.console = make(map[string]string) */
 }

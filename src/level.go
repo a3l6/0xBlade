@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 type Level struct {
 	upperBound int
 	lowerBound int
@@ -16,10 +12,4 @@ type Level struct {
 type LevelChar struct {
 	master int
 	char   uint8 // ASCII value
-}
-
-func (l *Level) draw() {
-	fmt.Printf("\033[s")
-	fmt.Print(l.sprite)
-	fmt.Printf("\033[u")
 }
