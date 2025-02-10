@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"sync"
 )
 
 type GameObject interface {
@@ -116,15 +115,11 @@ func (g *GameManager) deleteObject(id int, creationID uint8) {
 }
 
 func (g *GameManager) writeToConsole(key string, val string) {
-	g.muConsole.Lock()
 	g.console[key] = val
-	g.muConsole.Unlock()
 }
 
 func (g *GameManager) read(key string) string {
-	g.muConsole.Lock()
 	x := g.console[key]
-	g.muConsole.Unlock()
 	return x
 }
 

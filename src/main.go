@@ -117,8 +117,6 @@ func main() {
 			}
 		}()
 
-		level.draw()
-
 		//level.id = gameManager.registerAsObject(level)
 		player.id = gameManager.registerAsObject(player)
 
