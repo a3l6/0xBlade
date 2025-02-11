@@ -1,25 +1,35 @@
 package main
 
 type Player struct {
-	pos      Vector2
-	lastPos  Vector2
-	velocity Vector2
-	sprite   string
-	keymap   Keymap
-	id       int
+	pos            Vector2
+	lastPos        Vector2
+	velocity       Vector2
+	sprite         string
+	keymap         Keymap
+	last_direction uint8
+	id             int
 }
+
+const DIRECTION_UP = 0
+const DIRECTION_DOWN = 1
+const DIRECTION_RIGHT = 2
+const DIRECTION_LEFT = 3
 
 func (p *Player) move(chars []uint8) {
 	p.lastPos = p.pos
 	for _, val := range chars {
 		switch val {
 		case p.keymap.up:
+			p.last_direction = DIRECTION_UP
 			p.velocity.y--
 		case p.keymap.down:
+			p.last_direction = DIRECTION_DOWN
 			p.velocity.y++
 		case p.keymap.left:
+			p.last_direction = DIRECTION_LEFT
 			p.velocity.x--
 		case p.keymap.right:
+			p.last_direction = DIRECTION_RIGHT
 			p.velocity.x++
 		}
 	}
