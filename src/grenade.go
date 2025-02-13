@@ -1,5 +1,7 @@
 package main
 
+import "golang.org/x/text/cases"
+
 type Grenade struct {
 	pos         Vector2
 	vel         Vector2
@@ -9,6 +11,7 @@ type Grenade struct {
 	amplitude   int
 	id          int
 	creationID  uint8
+	direction   uint8
 }
 
 func (g *Grenade) Step() {}
@@ -18,9 +21,71 @@ func (g *Grenade) draw() {
 	//fmt.Printf("\033[s")
 	sprite := g.trailSprite
 
+	/*
+
+			UP
+
+
+		       !@!#!
+		       #@!@$#@#
+			@$#$@
+			 !#!
+			 #
+
+		       !@!
+		        @!@#
+			 $#@
+			 !#
+			 #
+
+
+
+			DOWN
+			 #
+		        !#!
+		       @$#$@
+		      #@#$@!@#
+		      !#!@#
+
+			 #
+		         #!
+		        $#$@
+		       #!@#
+		      !#!
+
+
+			RIGHT
+			opp of left
+
+
+	*/
+
 	// TODO: Change to stepable code
 	// LEGACY CODE
 	fps := 10 // FPS here to make it run slower
+
+	switch g.direction {
+	case DIRECTION_UP:
+		switch {
+		case g.step == 1 * fps:
+			g.pos.y -= 1 * g.amplitude
+			g.pos.x++
+			g.step++
+		case g.step == 2 * fps:
+			g.pos.y -= 2 * g.amplitude
+			g.step++
+		case g.step == 3 * fps:
+			g.pos.y += 2 * g.amplitude
+			g.step++
+		case g.step == 3 * fps:
+			g.step++
+		case g.step >= 5 * fps && g.step < 7 * fps:
+			copy()
+			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y -1):], []byte{'!', '#', '!'})
+			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y) + g.pos.x:], []byte{'#'})
+		}
+	case DIRECTION_DOWN:
+	case: DIRECTION_RIGHT:
 	switch {
 	case g.step == 1*fps:
 		g.pos.y -= 1 * g.amplitude
@@ -62,6 +127,9 @@ func (g *Grenade) draw() {
 		gameManager.deleteObject(g.id, g.creationID) // kill self
 	default:
 		g.step++
+	}
+
+	case: DIRDIRECTION_LEFT:
 	}
 	copy(gameManager.CurrBuffer[windowWidth*g.pos.y+g.pos.x:], []byte(sprite))
 }

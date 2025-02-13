@@ -10,10 +10,10 @@ type Player struct {
 	id             int
 }
 
-const DIRECTION_UP = 0
-const DIRECTION_DOWN = 1
-const DIRECTION_RIGHT = 2
-const DIRECTION_LEFT = 3
+const DIRECTION_UP uint8 = 0
+const DIRECTION_DOWN uint8 = 1
+const DIRECTION_RIGHT uint8 = 2
+const DIRECTION_LEFT uint8 = 3
 
 func (p *Player) move(chars []uint8) {
 	p.lastPos = p.pos
