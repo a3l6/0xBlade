@@ -57,7 +57,6 @@ func (g *Grenade) draw() {
 			RIGHT
 			opp of left
 
-
 	*/
 
 	// TODO: Change to stepable code
@@ -80,8 +79,10 @@ func (g *Grenade) draw() {
 		case g.step == 3 * fps:
 			g.step++
 		case g.step >= 5 * fps && g.step < 7 * fps:
-			copy()
-			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y -1):], []byte{'!', '#', '!'})
+			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y -4) + g.pos.x -2:], []byte{'!', '@', '!', '#', '!'})
+			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y -3) + g.pos.x -2:], []byte{'#', '@', '!', '@', '$', '#', '@', '#'})
+			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y - 2) + g.pos.x -1:], []byte{'@', '$', '#', '$', '@'})
+			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y -1) + g.pos.x:], []byte{'!', '#', '!'})
 			copy(gameManager.CurrBuffer[windowWidth * (g.pos.y) + g.pos.x:], []byte{'#'})
 		}
 	case DIRECTION_DOWN:
