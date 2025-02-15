@@ -47,6 +47,7 @@ type GameManager struct {
 	numEnemies uint8
 
 	ptrPlayer *Player
+	direction uint8
 }
 
 // Registers with Game manager and returns unique id.
@@ -57,10 +58,10 @@ func (g *GameManager) registerAsObject(obj GameObject) int {
 	return g.count - 1
 }
 
-func (g *GameManager) createNewGrenade(pos Vector2) error {
+func (g *GameManager) createNewGrenade(pos Vector2, direction uint8) error {
 	//  100 is max for grenades
 	if g.numGrenades != 100 {
-		g.grenades[g.numGrenades] = Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, creationID: g.numGrenades}
+		g.grenades[g.numGrenades] = Grenade{pos: pos, vel: Vector2{0, 0}, sprite: "O", trailSprite: "*", step: 0, amplitude: 1, creationID: g.numGrenades, direction: direction}
 		g.grenades[g.numGrenades].id = g.registerAsObject(&g.grenades[g.numGrenades])
 		g.numGrenades++
 		return nil

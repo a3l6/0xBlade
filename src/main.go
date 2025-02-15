@@ -88,7 +88,7 @@ func main() {
 				//gameManager.console["buf"] = "\"" + string(buf) + "\""
 				gameManager.writeToConsole("buf", fmt.Sprintf("\"%s\"", string(buf)))
 				if buf[0] == ' ' {
-					err = gameManager.createNewGrenade(player.pos)
+					err = gameManager.createNewGrenade(player.pos, player.last_direction)
 					if err != nil {
 					}
 				}
