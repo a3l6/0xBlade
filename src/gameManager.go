@@ -70,13 +70,14 @@ func (g *GameManager) createNewGrenade(pos Vector2, direction uint8) error {
 	}
 }
 
-func (g *GameManager) createNewEnemy(pos Vector2, ptrPlayer *Player) error {
+func (g *GameManager) tryToSpawnEnemy() {}
+
+func (g *GameManager) createNewEnemy(pos Vector2) error {
 	//  100 is max for enemies
 	if g.numEnemies != 100 {
 		g.enemies[g.numEnemies] = Enemy{
 			pos: fVector2{x: float32(pos.x),
 				y: float32(pos.y)},
-			player:     ptrPlayer,
 			sprite:     '?',
 			vel:        Vector2{0, 0},
 			damage:     0,

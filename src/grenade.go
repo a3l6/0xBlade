@@ -14,9 +14,7 @@ type Grenade struct {
 
 func (g *Grenade) Step() {}
 
-// TODO: Mke grenade explosion
 func (g *Grenade) draw() {
-	//fmt.Printf("\033[s")
 	sprite := g.trailSprite
 
 	/*
@@ -84,16 +82,6 @@ func (g *Grenade) draw() {
 			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []byte{'#'})
 			g.step++
 		case g.step >= 7*fps && g.step < 8*fps:
-
-			/*
-
-				       !@!
-				        @!@#
-					 $#@
-					 !#
-					 #
-
-			*/
 			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-2:], []byte{'!', '@', '!'})
 			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-1:], []byte{'@', '!', '@', '#'})
 			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-2)+g.pos.x:], []byte{'$', '#', '@'})

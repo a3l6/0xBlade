@@ -3,7 +3,6 @@ package main
 type Enemy struct {
 	pos        fVector2
 	lastPos    fVector2
-	player     *Player
 	sprite     byte
 	vel        Vector2
 	damage     uint
