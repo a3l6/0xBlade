@@ -3,7 +3,7 @@ package main
 type Enemy struct {
 	pos        fVector2
 	lastPos    fVector2
-	sprite     byte
+	sprite     rune
 	vel        Vector2
 	damage     uint
 	health     int

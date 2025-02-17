@@ -75,18 +75,18 @@ func (g *Grenade) draw() {
 		case g.step == 3*fps:
 			g.step++
 		case g.step >= 5*fps && g.step < 7*fps:
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-4)+g.pos.x-2:], []byte{'!', '@', '!', '#', '!'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-2:], []byte{'#', '@', '!', '@', '$', '#', '@', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-2)+g.pos.x-1:], []byte{'@', '$', '#', '$', '@'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-1)+g.pos.x:], []byte{'!', '#', '!'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []byte{'#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-4)+g.pos.x-2:], []rune{'!', '@', '!', '#', '!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-2:], []rune{'#', '@', '!', '@', '$', '#', '@', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-2)+g.pos.x-1:], []rune{'@', '$', '#', '$', '@'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-1)+g.pos.x:], []rune{'!', '#', '!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []rune{'#'})
 			g.step++
 		case g.step >= 7*fps && g.step < 8*fps:
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-2:], []byte{'!', '@', '!'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-1:], []byte{'@', '!', '@', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-2)+g.pos.x:], []byte{'$', '#', '@'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-1)+g.pos.x:], []byte{'!', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []byte{'#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-2:], []rune{'!', '@', '!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-3)+g.pos.x-1:], []rune{'@', '!', '@', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-2)+g.pos.x:], []rune{'$', '#', '@'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y-1)+g.pos.x:], []rune{'!', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []rune{'#'})
 			g.step++
 		case g.step == 8*fps:
 			g.step++
@@ -112,11 +112,11 @@ func (g *Grenade) draw() {
 		case g.step == 3*fps:
 			g.step++
 		case g.step >= 5*fps && g.step < 7*fps:
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []byte{'#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x:], []byte{'!', '#', '!'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x-1:], []byte{'@', '$', '#', '$', '@'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-2:], []byte{'#', '@', '!', '@', '$', '#', '@', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+4)+g.pos.x-2:], []byte{'!', '@', '!', '#', '!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []rune{'#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x:], []rune{'!', '#', '!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x-1:], []rune{'@', '$', '#', '$', '@'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-2:], []rune{'#', '@', '!', '@', '$', '#', '@', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+4)+g.pos.x-2:], []rune{'!', '@', '!', '#', '!'})
 			g.step++
 		case g.step >= 7*fps && g.step < 8*fps:
 
@@ -129,11 +129,11 @@ func (g *Grenade) draw() {
 					 #
 
 			*/
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []byte{'#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x:], []byte{'!', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x:], []byte{'$', '#', '@'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-1:], []byte{'@', '!', '@', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-2:], []byte{'!', '@', '!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x:], []rune{'#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x:], []rune{'!', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x:], []rune{'$', '#', '@'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-1:], []rune{'@', '!', '@', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-2:], []rune{'!', '@', '!'})
 			g.step++
 		case g.step == 8*fps:
 			g.step++
@@ -165,18 +165,18 @@ func (g *Grenade) draw() {
 			// TODO: Make grenade explosion random
 			// Empty: "\0331A     \033[1B\033[4D     \033[1B\033[5D         \033[1B\033[5D   "
 			//new_sprite := "\0331A   !#\033[1B\033[4D$#@#$\033[1B\033[5D #@$%$#$#\033[1B\033[5D!@#"
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x+3:], []byte{'!', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x+2:], []byte{'$', '#', '@', '#', '$'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+1:], []byte{'#', '@', '$', '%', '$', '#', '$', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x+3:], []byte{'!', '@', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x+3:], []rune{'!', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x+2:], []rune{'$', '#', '@', '#', '$'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+1:], []rune{'#', '@', '$', '%', '$', '#', '$', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x+3:], []rune{'!', '@', '#'})
 			g.step++
 		case g.step >= 7*fps && g.step < 8*fps:
 
 			//new_sprite := "\0331A   ! \033[1B\033[4D @#@ \033[1B\033[5D  @#$%   \033[1B\033[5D * "
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x+2:], []byte{'!'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x+4:], []byte{'@', '#', '@'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+3:], []byte{'@', '#', '$', '%'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x+3:], []byte{'*'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x+2:], []rune{'!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x+4:], []rune{'@', '#', '@'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x+3:], []rune{'@', '#', '$', '%'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x+3:], []rune{'*'})
 			g.step++
 		case g.step == 8*fps:
 			g.step++
@@ -209,18 +209,18 @@ func (g *Grenade) draw() {
 			// TODO: Make grenade explosion random
 			// Empty: "\0331A     \033[1B\033[4D     \033[1B\033[5D         \033[1B\033[5D   "
 			//new_sprite := "\0331A   !#\033[1B\033[4D$#@#$\033[1B\033[5D #@$%$#$#\033[1B\033[5D!@#"
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x-5:], []byte{'!', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x-7:], []byte{'$', '#', '@', '#', '$'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x-9:], []byte{'#', '@', '$', '%', '$', '#', '$', '#'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-6:], []byte{'!', '@', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x-5:], []rune{'!', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x-7:], []rune{'$', '#', '@', '#', '$'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x-9:], []rune{'#', '@', '$', '%', '$', '#', '$', '#'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-6:], []rune{'!', '@', '#'})
 			g.step++
 		case g.step >= 7*fps && g.step < 8*fps:
 
 			//new_sprite := "\0331A   ! \033[1B\033[4D @#@ \033[1B\033[5D  @#$%   \033[1B\033[5D * "
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x-3:], []byte{'!'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x-7:], []byte{'@', '#', '@'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x-7:], []byte{'@', '#', '$', '%'})
-			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-4:], []byte{'*'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y)+g.pos.x-3:], []rune{'!'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+1)+g.pos.x-7:], []rune{'@', '#', '@'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+2)+g.pos.x-7:], []rune{'@', '#', '$', '%'})
+			copy(gameManager.CurrBuffer[windowWidth*(g.pos.y+3)+g.pos.x-4:], []rune{'*'})
 			g.step++
 		case g.step == 8*fps:
 			g.step++
@@ -230,5 +230,5 @@ func (g *Grenade) draw() {
 			g.step++
 		}
 	}
-	copy(gameManager.CurrBuffer[windowWidth*g.pos.y+g.pos.x:], []byte(sprite))
+	copy(gameManager.CurrBuffer[windowWidth*g.pos.y+g.pos.x:], []rune(sprite))
 }

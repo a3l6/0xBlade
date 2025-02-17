@@ -54,5 +54,5 @@ func (p *Player) move(chars []uint8) {
 }
 
 func (p *Player) draw() {
-	copy(gameManager.CurrBuffer[windowWidth*p.pos.y+p.pos.x:], []byte(p.sprite))
+	copy(gameManager.CurrBuffer[windowWidth*p.pos.y+p.pos.x:], []rune(p.sprite))
 }

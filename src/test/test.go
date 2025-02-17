@@ -125,8 +125,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"golang.org/x/term"
-	"os"
 )
 
 type Player struct {
@@ -170,55 +168,7 @@ func print(buffer []byte, str []byte) []byte {
 }
 
 func main() {
-	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
-	if err != nil {
-		panic(err)
-	}
-	defer term.Restore(int(os.Stdin.Fd()), oldState)
-
-	width, height, err := term.GetSize(int(os.Stdout.Fd()))
-	if err != nil {
-		panic(err)
-	}
-
-	//level, err := os.ReadFile("level.txt")
-	//if err != nil {
-	//	panic(err)
-	//}
-
-	currbuffer := make([]byte, width*height)
-	prevbuffer := make([]byte, width*height)
-
-	buf := make([]byte, 1)
-	go func() {
-		for {
-			_, err := os.Stdin.Read(buf)
-			if err != nil {
-				panic(err)
-			}
-		}
-	}()
-
-	j := 1
-
-	//bg := generateBG()
-	//copy(currbuffer[:], bg[:])
-	for {
-
-		currbuffer[j%width] = '#' // Simple moving object
-		j++
-		if buf[0] == 'q' {
-			return
-		}
-
-		for i := range currbuffer {
-			if currbuffer[i] != prevbuffer[i] {
-				x, y := i%width, i/width
-				fmt.Printf("\033[%d;%dH%c", y+1, x+1, currbuffer[i])
-			}
-		}
-
-		copy(prevbuffer, currbuffer) // Save state for next frame
-
-	}
+	var x [10]rune
+	copy(x[:], y[:])
+	fmt.Print("Hi\x7F")
 }

@@ -120,7 +120,7 @@ func main() {
 		//level.id = gameManager.registerAsObject(level)
 		player.id = gameManager.registerAsObject(player)
 
-		gameManager.createNewEnemy(Vector2{70, 10}, player)
+		gameManager.createNewEnemy(Vector2{70, 10})
 
 		const fps = 10
 		frameDuration := time.Second / fps
@@ -129,7 +129,9 @@ func main() {
 
 		for {
 			start := time.Now()
+			// TODO: convert to once??
 			gameManager.ptrPlayer = player
+			gameManager.tryToSpawnEnemy()
 			gameManager.StepAll()
 
 			if buf[0] == 'q' {

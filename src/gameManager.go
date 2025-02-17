@@ -1,26 +1,27 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type GameObject interface {
 	draw()
 }
 
-func generateBG() [45 * 95 * 2]byte {
+func generateBG() [45 * 95 * 2]rune {
 	const width = 95 * 2
 	const height = 45
 
-	var bg [width * height]byte
+	var bg [width * height]rune
 	for i := 0; i < len(bg); i += 2 {
 		bg[i] = '#'
 		bg[i+1] = ' '
 	}
 	fmt.Println(len(bg))
-	emptySpace := bytes.Repeat([]byte{' ', ' '}, 40)
+	emptySpace := []rune(strings.Repeat(string([]rune{' ', ' '}), 40))
+	//	emptySpace := bytes.Repeat([]rune{' ', ' '}, 40)
 	offset := (width - len(emptySpace)) / 2
 	for i := offset + (2 * width); i <= len(bg)-2*width; i += width {
 		copy(bg[i:], emptySpace)
@@ -33,8 +34,8 @@ func generateBG() [45 * 95 * 2]byte {
 var spaceBuffer = generateBG()
 
 type GameManager struct {
-	CurrBuffer [windowWidth * 2 * windowHeight]byte
-	prevBuffer [windowWidth * 2 * windowHeight]byte
+	CurrBuffer [windowWidth * 2 * windowHeight]rune
+	prevBuffer [windowWidth * 2 * windowHeight]rune
 
 	drawable map[int]*GameObject
 	count    int
