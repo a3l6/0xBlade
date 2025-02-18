@@ -17,7 +17,7 @@ func generateBG() [45 * 95 * 2]rune {
 	var bg [width * height]rune
 	for i := 0; i < len(bg); i += 2 {
 		bg[i] = '#'
-		bg[i+1] = ' '
+		bg[i+1] = ' '
 	}
 	fmt.Println(len(bg))
 	emptySpace := []rune(strings.Repeat(string([]rune{' ', ' '}), 40))
