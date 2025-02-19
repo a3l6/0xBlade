@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	random "math/rand"
 	"strings"
 )
 
@@ -71,7 +72,13 @@ func (g *GameManager) createNewGrenade(pos Vector2, direction uint8) error {
 	}
 }
 
-func (g *GameManager) tryToSpawnEnemy() {}
+func (g *GameManager) tryToSpawnEnemy() {
+	randomPos := g.CurrBuffer[random.Intn(len(g.prevBuffer))]
+	x := randomPos % rune(windowWidth)
+	y := randomPos / rune(windowWidth)
+	copy(g.CurrBuffer[10:], []rune(fmt.Sprintf("%d", randomPos)))
+	(*g).createNewEnemy(Vector2{x: int(x), y: int(y + 1)})
+}
 
 func (g *GameManager) createNewEnemy(pos Vector2) error {
 	//  100 is max for enemies
@@ -133,6 +140,8 @@ func (g *GameManager) drawScreen() {
 	// FUTURE ME: Don't change this to traditional loop
 
 	copy(g.CurrBuffer[:], spaceBuffer[:])
+
+	g.tryToSpawnEnemy()
 
 	for _, val := range g.drawable {
 		(*val).draw()

@@ -107,6 +107,7 @@ func main() {
 			frameDuration := time.Second / 120
 			for {
 				start := time.Now()
+
 				gameManager.drawScreen()
 
 				elapsed := time.Since(start)
@@ -131,7 +132,7 @@ func main() {
 			start := time.Now()
 			// TODO: convert to once??
 			gameManager.ptrPlayer = player
-			gameManager.tryToSpawnEnemy()
+
 			gameManager.StepAll()
 
 			if buf[0] == 'q' {
