@@ -16,8 +16,9 @@ const windowHeight int = 45
 const windowWidth int = 95 * 2
 
 var gameManager GameManager = GameManager{
-	drawable: make(map[int]*GameObject),
-	console:  make(map[string]string),
+	drawable:       make(map[int]*GameObject),
+	console:        make(map[string]string),
+	difficultySeed: 120,
 }
 var keymap Keymap = Keymap{up: 'w', down: 's', left: 'a', right: 'd', aimUp: 'i', aimDown: 'k', aimLeft: 'j', aimRight: 'l'}
 var level *Level = &Level{

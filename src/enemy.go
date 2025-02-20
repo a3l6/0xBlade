@@ -15,18 +15,36 @@ type Enemy struct {
 func (e *Enemy) Step() {
 	if gameManager.ptrPlayer != nil {
 		const speed = .5
+
 		e.lastPos = e.pos
 		if gameManager.ptrPlayer.pos.x > int(e.pos.x) {
-			e.pos.x += speed
+
+			charOnNextPosition := gameManager.CurrBuffer[windowWidth*int(e.pos.y)+int(e.pos.x)+1]
+			if charOnNextPosition != e.sprite {
+				e.pos.x += speed
+			}
+
 		} else if gameManager.ptrPlayer.pos.x < int(e.pos.x) {
-			e.pos.x -= speed
+
+			charOnNextPosition := gameManager.CurrBuffer[windowWidth*int(e.pos.y)+int(e.pos.x)-1]
+			if charOnNextPosition != e.sprite {
+				e.pos.x -= speed
+			}
 		} else {
 		}
 
 		if gameManager.ptrPlayer.pos.y > int(e.pos.y) {
-			e.pos.y += speed
+
+			charOnNextPosition := gameManager.CurrBuffer[windowWidth*int(e.pos.y+1)+int(e.pos.x)]
+			if charOnNextPosition != e.sprite {
+				e.pos.y += speed
+			}
 		} else if gameManager.ptrPlayer.pos.y < int(e.pos.y) {
-			e.pos.y -= speed
+
+			charOnNextPosition := gameManager.CurrBuffer[windowWidth*int(e.pos.y-1)+int(e.pos.x)]
+			if charOnNextPosition != e.sprite {
+				e.pos.y -= speed
+			}
 		} else {
 		}
 	} else {

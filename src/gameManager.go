@@ -18,11 +18,15 @@ func generateBG() [45 * 95 * 2]rune {
 	var bg [width * height]rune
 	for i := 0; i < len(bg); i += 2 {
 		bg[i] = '#'
-		bg[i+1] = ' '
+		bg[i+1] = ' '
+		// This is not a space
+		// Char above is U+2000, EN QUAD
+		// This is here because I want to have a space between the # but I want to detect what is a wall
 	}
 	fmt.Println(len(bg))
-	emptySpace := []rune(strings.Repeat(string([]rune{' ', ' '}), 40))
-	//	emptySpace := bytes.Repeat([]rune{' ', ' '}, 40)
+
+	emptySpace := []rune(strings.Repeat(string([]rune{' ', ' '}), 40)) // These are spaces
+	//	emptySpace := bytes.Repeat([]rune{' ', ' '}, 41)
 	offset := (width - len(emptySpace)) / 2
 	for i := offset + (2 * width); i <= len(bg)-2*width; i += width {
 		copy(bg[i:], emptySpace)
@@ -35,8 +39,8 @@ func generateBG() [45 * 95 * 2]rune {
 var spaceBuffer = generateBG()
 
 type GameManager struct {
-	CurrBuffer [windowWidth * 2 * windowHeight]rune
-	prevBuffer [windowWidth * 2 * windowHeight]rune
+	CurrBuffer [windowWidth * windowHeight]rune
+	prevBuffer [windowWidth * windowHeight]rune
 
 	drawable map[int]*GameObject
 	count    int
@@ -50,6 +54,8 @@ type GameManager struct {
 
 	ptrPlayer *Player
 	direction uint8
+
+	difficultySeed uint8
 }
 
 // Registers with Game manager and returns unique id.
@@ -73,11 +79,17 @@ func (g *GameManager) createNewGrenade(pos Vector2, direction uint8) error {
 }
 
 func (g *GameManager) tryToSpawnEnemy() {
-	randomPos := g.CurrBuffer[random.Intn(len(g.prevBuffer))]
-	x := randomPos % rune(windowWidth)
-	y := randomPos / rune(windowWidth)
-	copy(g.CurrBuffer[10:], []rune(fmt.Sprintf("%d", randomPos)))
-	(*g).createNewEnemy(Vector2{x: int(x), y: int(y + 1)})
+	randNum := random.Intn(int(g.difficultySeed)) // 120 so on average 1 new enemy per second
+	randomPos := random.Intn(len(g.prevBuffer))
+	char := g.CurrBuffer[randomPos]
+
+	//copy(g.CurrBuffer[10:], []rune(fmt.Sprintf("\"%s\"", )))
+	if char == ' ' && randNum == 1 {
+		x := randomPos % windowWidth
+		y := randomPos / windowWidth
+
+		g.createNewEnemy(Vector2{x: int(x), y: int(y)})
+	}
 }
 
 func (g *GameManager) createNewEnemy(pos Vector2) error {
@@ -88,7 +100,6 @@ func (g *GameManager) createNewEnemy(pos Vector2) error {
 				y: float32(pos.y)},
 			sprite:     '?',
 			vel:        Vector2{0, 0},
-			damage:     0,
 			health:     100,
 			creationId: int(g.numEnemies)}
 		g.enemies[g.numEnemies].id = g.registerAsObject(&g.enemies[g.numEnemies])
