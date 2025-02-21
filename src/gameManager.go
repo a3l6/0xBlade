@@ -55,7 +55,7 @@ type GameManager struct {
 	ptrPlayer *Player
 	direction uint8
 
-	difficultySeed uint8
+	difficultySeed uint8 // Ensure proper setting to use per time
 }
 
 // Registers with Game manager and returns unique id.
@@ -79,7 +79,7 @@ func (g *GameManager) createNewGrenade(pos Vector2, direction uint8) error {
 }
 
 func (g *GameManager) tryToSpawnEnemy() {
-	randNum := random.Intn(int(g.difficultySeed)) // 120 so on average 1 new enemy per second
+	randNum := random.Intn(int(g.difficultySeed)) // difficultySeed adjusted to match per frame
 	randomPos := random.Intn(len(g.prevBuffer))
 	char := g.CurrBuffer[randomPos]
 

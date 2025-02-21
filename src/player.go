@@ -33,8 +33,9 @@ func (p *Player) move(chars []uint8) {
 			p.velocity.x++
 		}
 	}
-
 	newPos := addVector2(p.pos, p.velocity)
+	CharOnNextPosition := gameManager.CurrBuffer[windowWidth*newPos.y+newPos.x]
+	if CharOnNextPosition == 
 	if newPos.x < level.leftBound {
 		newPos.x++
 	}
