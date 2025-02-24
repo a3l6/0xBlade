@@ -6,7 +6,6 @@ type Level struct {
 	leftBound  int
 	rightBound int
 	id         int
-	sprite     string
 }
 
 type LevelChar struct {

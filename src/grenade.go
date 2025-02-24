@@ -14,6 +14,7 @@ type Grenade struct {
 
 func (g *Grenade) Step() {}
 
+// Copies the grenades sprite to the buffer. All panics are ignored.
 func (g *Grenade) draw() {
 	sprite := g.trailSprite
 
@@ -58,6 +59,14 @@ func (g *Grenade) draw() {
 	// TODO: Change to stepable code
 	// LEGACY CODE
 	fps := 10 // FPS here to make it run slower
+
+	defer func() {
+		if err := recover(); err != nil {
+			// When copying the grenade sprite to the buffer it will panic if out of range
+			// This is fine, just get rid of the grenade because it's usually just off the screen
+			gameManager.deleteObject(g.id, g.creationID)
+		}
+	}()
 
 	switch g.direction {
 	case DIRECTION_UP:

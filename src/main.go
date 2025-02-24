@@ -52,27 +52,6 @@ func main() {
 
 		player := &Player{pos: Vector2{61, 2}, sprite: "&", keymap: keymap}
 
-		sprite, err := contentsOfFile("src/level.txt")
-		if err != nil {
-			panic(err)
-		}
-
-		level.sprite = strings.Join(sprite, "\r\n")
-
-		/*fileName := "level1.txt"
-		data := strings.Join(level.sprite, "\n")
-		file, err := os.Create(fileName)
-		if err != nil {
-			fmt.Println("Cannot create file! ", err)
-			return
-		}
-		defer file.Close()
-
-		_, err = file.WriteString(data)
-		if err != nil {
-			fmt.Println("Error writing to file, ", err)
-		}*/
-
 		handleInputs := func() {
 			frameDuration := time.Second / 120
 			for {
