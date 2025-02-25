@@ -1,7 +1,5 @@
-compile:
-	@echo Enter Version Number:; \
-	read VERSION;
+VERSION = v1.0
 
-	go build -o ./bin/$$(VERSION)/0xBlade/ ./src/;
-	cd ../bin/$$(VERSION)/;
-	zip 0xBlade.zip 0xBlade;
+compile:
+	go build -o ./bin/$(VERSION)/0xBlade ./src/;
+	cd ./bin/$(VERSION)/ && tar -czvf 0xBlade_$(VERSION).tar.gz *

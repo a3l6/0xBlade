@@ -1,6 +1,14 @@
 # 0xBlade
 
-### Terminal based melee game with almost no dependencies
+### Terminal based melee game built in Go with no external dependencies
+
+## Building from source
+```bash
+git clone https://github.com/a3l6/0xBlade.git
+cd 0xBlade
+make compile VERSION=v1.0 # enter your version code here
+```
+The output will be in `bin/VERSION/`.
 
 ## Useful Links
 
