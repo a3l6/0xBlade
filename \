@@ -48,7 +48,6 @@ func main() {
 
 	switch mode {
 	case "menu":
-		fmt.Printf("\033[2J")
 		width, height, err := term.GetSize(int(os.Stderr.Fd()))
 		if err != nil {
 			width := windowWidth
@@ -122,8 +121,7 @@ func main() {
 				log.Fatal(err)
 			}
 
-			for range buttons {
-				copy(currBuffer[width*25:], []rune{rune(buf[0])}) //[]rune(fmt.Sprintf("%#v", buttons[0])))
+			for _, btn := range buttons {
 				if buf[0] == 's' {
 					mode = "main" //btn.Callback()
 				}

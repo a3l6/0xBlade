@@ -23,7 +23,6 @@ func generateBG() [45 * 95 * 2]rune {
 		// Char above is U+2000, EN QUAD
 		// This is here because I want to have a space between the # but I want to detect what is a wall
 	}
-	fmt.Println(len(bg))
 
 	emptySpace := []rune(strings.Repeat(string([]rune{' ', ' '}), 40)) // These are spaces
 	//	emptySpace := bytes.Repeat([]rune{' ', ' '}, 41)
