@@ -3,7 +3,7 @@ module TDS/TDS
 go 1.23.5
 
 require (
-	github.com/a3l6/libtui v1.0.2
+	github.com/a3l6/libtui v1.0.3
 	golang.org/x/term v0.26.0
 )
 

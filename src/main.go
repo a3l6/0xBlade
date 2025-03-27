@@ -72,21 +72,39 @@ func main() {
 					"                        ░                   ░              \r\n",
 				"\r\n")
 
-			var buttons [2]libtui.Button
+			var buttons [3]libtui.Button
 			buttons[0] = libtui.Button{
 				Width:  20,
 				Height: 1,
 				Align:  libtui.AlignLeft,
-				Value:  "Start Game       s",
-				Key:    's',
+				Position: libtui.Vector2{
+					// 20 is width, 15 is just offset for sep
+					X: width/2 - 20 - 15,
+					Y: height / 2},
+				Value: "Start Game     spc",
+				Key:   ' ',
 				Callback: func() {
 					mode = "main"
 				},
 			}
 			buttons[1] = libtui.Button{
-				Width:    20,
-				Height:   1,
-				Align:    libtui.AlignLeft,
+				Width:  20,
+				Height: 1,
+				Align:  libtui.AlignLeft,
+				Position: libtui.Vector2{
+					X: width/2 - 10,
+					Y: height / 2},
+				Value:    "Settings         s",
+				Key:      's',
+				Callback: func() {},
+			}
+			buttons[2] = libtui.Button{
+				Width:  20,
+				Height: 1,
+				Align:  libtui.AlignLeft,
+				Position: libtui.Vector2{
+					X: width/2 + 15,
+					Y: height / 2},
 				Value:    "Quit             q",
 				Key:      'q',
 				Callback: func() {},
@@ -103,7 +121,6 @@ func main() {
 					_, err := os.Stdin.Read(buf)
 					if err != nil {
 						term.Restore(int(os.Stdin.Fd()), oldState)
-
 						log.Fatal(err)
 						panic(err)
 					}
@@ -126,27 +143,29 @@ func main() {
 				copy(currBuffer[:], emptySpace[:])
 
 				for idx, row := range splash_screen {
-					copy(currBuffer[width*idx:], []rune(row))
+					y := width * (idx + (height/2 - len(splash_screen)) - 3) // 3 is just because
+					x := width/2 - len(splash_screen[0])/4
+					copy(currBuffer[y+x:], []rune(row))
 				}
 
 				for _, btn := range buttons {
-					copy(currBuffer[width*25:], []rune{rune(buf[0])})
 					if buf[0] == byte(btn.Key) {
 						btn.Callback()
 					}
+
+					rendered, err := btn.RenderToArrRunes()
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					copy(currBuffer[width*btn.Position.Y+btn.Position.X:], rendered[:])
 				}
 
 				if buf[0] == 'q' {
 					return
 				}
 
-				btn_rendered, err := buttons[0].RenderToArrRunes()
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				copy(currBuffer[width*20:], btn_rendered[:])
-
+				// Ensure all updates to the buffer that you want drawn is done before this code
 				for i := range currBuffer {
 					if currBuffer[i] != prevBuffer[i] {
 						x, y := i%windowWidth, i/windowWidth
