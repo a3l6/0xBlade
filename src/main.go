@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -29,6 +30,11 @@ var level *Level = &Level{
 	leftBound:  60,
 }
 
+var screenBuffer ScreenBuffer
+var Writer = bufio.NewWriterSize(&screenBuffer, windowHeight*windowWidth)
+
+var renderer Renderer
+
 var mode string = "menu"
 
 func main() {
@@ -48,7 +54,6 @@ func main() {
 	for {
 		switch mode {
 		case "menu":
-			fmt.Printf("\033[2J")
 			width, height, err := term.GetSize(int(os.Stderr.Fd()))
 			if err != nil {
 				width := windowWidth
@@ -56,9 +61,6 @@ func main() {
 				fmt.Printf("Error: %d %d", width, height)
 			}
 
-			emptySpace := []rune(strings.Repeat(string([]rune{' ', ' '}), 40)) // These are spaces
-			currBuffer := make([]rune, width*height)
-			prevBuffer := make([]rune, width*height)
 			splash_screen := strings.Split(
 				"▒█████  ▒██   ██▒ ▄▄▄▄    ██▓    ▄▄▄      ▓█████▄ ▓█████\r\n"+
 					"▒██▒  ██▒▒▒ █ █ ▒░▓█████▄ ▓██▒   ▒████▄    ▒██▀ ██▌▓█   ▀ \r\n"+
@@ -71,6 +73,8 @@ func main() {
 					"    ░ ░   ░    ░   ░          ░  ░     ░  ░   ░       ░  ░\r\n"+
 					"                        ░                   ░              \r\n",
 				"\r\n")
+
+			settings_modal := libtui.Modal{Width: 10, Height: 20, Position: libtui.Vector2{X: 20, Y: 20}}
 
 			var buttons [3]libtui.Button
 			buttons[0] = libtui.Button{
@@ -94,9 +98,11 @@ func main() {
 				Position: libtui.Vector2{
 					X: width/2 - 10,
 					Y: height / 2},
-				Value:    "Settings         s",
-				Key:      's',
-				Callback: func() {},
+				Value: "Settings         s",
+				Key:   's',
+				Callback: func() {
+					settings_modal.Active = true
+				},
 			}
 			buttons[2] = libtui.Button{
 				Width:  20,
@@ -140,12 +146,11 @@ func main() {
 
 			for {
 				start := time.Now()
-				copy(currBuffer[:], emptySpace[:])
 
 				for idx, row := range splash_screen {
-					y := width * (idx + (height/2 - len(splash_screen)) - 3) // 3 is just because
+					y := idx + 10 //width * (idx + (height/2 - len(splash_screen)) - 3) // 3 is just because
 					x := width/2 - len(splash_screen[0])/4
-					copy(currBuffer[y+x:], []rune(row))
+					fmt.Fprintf(Writer, "\033[%d;%dH%s", y, x, row)
 				}
 
 				for _, btn := range buttons {
@@ -158,21 +163,20 @@ func main() {
 						log.Fatal(err)
 					}
 
-					copy(currBuffer[width*btn.Position.Y+btn.Position.X:], rendered[:])
+					fmt.Fprintf(Writer, "\033[%d;%dH%c", btn.Position.Y, btn.Position.X, rendered)
 				}
 
 				if buf[0] == 'q' {
 					return
 				}
 
-				// Ensure all updates to the buffer that you want drawn is done before this code
-				for i := range currBuffer {
-					if currBuffer[i] != prevBuffer[i] {
-						x, y := i%windowWidth, i/windowWidth
-						fmt.Printf("\033[%d;%dH%c", y+1, x+1, currBuffer[i])
+				if settings_modal.Active {
+					rendered, err := settings_modal.RenderToArrRunes()
+					if err != nil {
+						log.Fatal(err)
 					}
+					fmt.Fprintf(Writer, "\033[%d;%dH%c", settings_modal.Position.Y, settings_modal.Position.X, rendered)
 				}
-				copy(prevBuffer[:], currBuffer[:])
 
 				elapsed := time.Since(start)
 				sleepTime := frameDuration - elapsed
@@ -183,6 +187,9 @@ func main() {
 				if mode != "menu" {
 					break
 				}
+
+				Writer.Flush()
+				fmt.Fprintf(Writer, "\033[2J")
 			}
 
 		case "main":

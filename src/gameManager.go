@@ -157,11 +157,24 @@ func (g *GameManager) drawScreen() {
 		(*val).draw()
 	}
 
-	for i := range g.CurrBuffer {
+	/*ansi_areas := renderer.parseANSI()
+	ansi_found := 0
+
+	 for i := range g.CurrBuffer {
 		if g.CurrBuffer[i] != g.prevBuffer[i] {
 			x, y := i%windowWidth, i/windowWidth
+			if i == ansi_areas[ansi_found].start {
+				fmt.Printf("\033[%d;%dH%s", y+1, x+1, string(g.CurrBuffer[ansi_areas[ansi_found].start:ansi_areas[ansi_found].end]))
+			} else if i > ansi_areas[ansi_found].start && i <= ansi_areas[ansi_found].end {
+
+			}
 			fmt.Printf("\033[%d;%dH%c", y+1, x+1, g.CurrBuffer[i])
 		}
+	} */
+
+	for i := 0; i < len(g.CurrBuffer); i += windowWidth {
+		x, y := i%windowWidth, i/windowWidth
+		fmt.Printf("\033[%d;%dH%s", y+1, x+1, fmt.Sprintf(string(g.CurrBuffer[i:i+windowWidth])))
 	}
 	// TODO: Make elegant handling of console
 	// Another window would be really nice
