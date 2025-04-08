@@ -175,7 +175,10 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-					fmt.Fprintf(Writer, "\033[%d;%dH%c", settings_modal.Position.Y, settings_modal.Position.X, rendered)
+					for _, ln := range rendered {
+						fmt.Fprint(Writer, "\x1b[s"+string(ln))
+						fmt.Fprint(Writer, "\x1b[u;[1B")
+					}
 				}
 
 				elapsed := time.Since(start)
