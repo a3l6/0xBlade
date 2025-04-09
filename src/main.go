@@ -54,6 +54,7 @@ func main() {
 	for {
 		switch mode {
 		case "menu":
+			fmt.Fprintf(Writer, "\033[2J\033[H")
 			width, height, err := term.GetSize(int(os.Stderr.Fd()))
 			if err != nil {
 				width := windowWidth
@@ -193,7 +194,6 @@ func main() {
 				}
 
 				Writer.Flush()
-				fmt.Fprintf(Writer, "\033[2J")
 			}
 
 		case "main":
