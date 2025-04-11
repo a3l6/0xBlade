@@ -54,7 +54,7 @@ func main() {
 	for {
 		switch mode {
 		case "menu":
-			fmt.Fprintf(Writer, "\033[2J\033[H")
+			fmt.Printf("\033[2J\033[H")
 			width, height, err := term.GetSize(int(os.Stderr.Fd()))
 			if err != nil {
 				width := windowWidth
@@ -151,7 +151,7 @@ func main() {
 				for idx, row := range splash_screen {
 					y := idx + 10 //width * (idx + (height/2 - len(splash_screen)) - 3) // 3 is just because
 					x := width/2 - len(splash_screen[0])/4
-					fmt.Fprintf(Writer, "\033[%d;%dH%s", y, x, row)
+					fmt.Printf("\033[%d;%dH%s", y, x, row)
 				}
 
 				for _, btn := range buttons {
@@ -164,7 +164,7 @@ func main() {
 						log.Fatal(err)
 					}
 
-					fmt.Fprintf(Writer, "\033[%d;%dH%c", btn.Position.Y, btn.Position.X, rendered)
+					fmt.Printf("\033[%d;%dH%c", btn.Position.Y, btn.Position.X, rendered)
 				}
 
 				if buf[0] == 'q' {
@@ -172,15 +172,15 @@ func main() {
 				}
 
 				if settings_modal.Active {
-					/*rendered, err := settings_modal.RenderToArrRunes()
+					rendered, err := settings_modal.RenderToArrRunes()
 					if err != nil {
 						log.Fatal(err)
 					}
-					fmt.Fprintf(Writer, "\x1b[%d;%dH", settings_modal.Position.Y, settings_modal.Position.X)
+					fmt.Printf("\x1b[%d;%dH", settings_modal.Position.Y, settings_modal.Position.X)
 					for _, ln := range rendered {
-						fmt.Fprint(Writer, "\x1b[s"+string(ln))
-						fmt.Fprint(Writer, "\x1b[u;[1B")
-					}*/
+						fmt.Print("\x1b[s" + string(ln))
+						fmt.Print("\x1b[u;[1B")
+					}
 				}
 
 				elapsed := time.Since(start)
@@ -192,8 +192,6 @@ func main() {
 				if mode != "menu" {
 					break
 				}
-
-				Writer.Flush()
 			}
 
 		case "main":
