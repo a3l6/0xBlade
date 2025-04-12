@@ -179,7 +179,7 @@ func main() {
 					fmt.Printf("\x1b[%d;%dH", settings_modal.Position.Y, settings_modal.Position.X)
 					for _, ln := range rendered {
 						fmt.Print("\x1b[s" + string(ln))
-						fmt.Print("\x1b[u;[1B")
+						fmt.Print("\x1b[u\x1b[1B")
 					}
 				}
 
