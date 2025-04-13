@@ -75,7 +75,7 @@ func main() {
 					"                        ░                   ░              \r\n",
 				"\r\n")
 
-			settings_modal := libtui.Modal{Width: 10, Height: 20, Position: libtui.Vector2{X: 20, Y: 20}}
+			settings_modal := libtui.Modal{Width: 50, Height: 20, Position: libtui.Vector2{X: 20, Y: 20}}
 
 			var buttons [3]libtui.Button
 			buttons[0] = libtui.Button{
