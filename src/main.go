@@ -54,7 +54,6 @@ func main() {
 	for {
 		switch mode {
 		case "menu":
-			fmt.Printf("\033[2J\033[H")
 			width, height, err := term.GetSize(int(os.Stderr.Fd()))
 			if err != nil {
 				width := windowWidth
@@ -75,7 +74,7 @@ func main() {
 					"                        ░                   ░              \r\n",
 				"\r\n")
 
-			settings_modal := libtui.Modal{Width: 50, Height: 20, Position: libtui.Vector2{X: 20, Y: 20}}
+			settings_modal := libtui.Modal{Width: 70, Height: 20, Position: libtui.Vector2{X: width/2 - 35, Y: height/2 - 10}}
 
 			var buttons [3]libtui.Button
 			buttons[0] = libtui.Button{
@@ -121,6 +120,10 @@ func main() {
 			const frameDuration = time.Second / fps
 			buf := make([]byte, 1)
 
+			resetBuf := func() {
+				buf = make([]byte, 1)
+			}
+
 			handleInputs := func() {
 				frameDuration := time.Second / 120
 				for {
@@ -131,6 +134,24 @@ func main() {
 						log.Fatal(err)
 						panic(err)
 					}
+
+					if buf[0] == 'q' {
+						if settings_modal.Active {
+							settings_modal.Active = false
+						} else {
+							os.Exit(0)
+						}
+
+						resetBuf()
+					}
+
+					for _, btn := range buttons {
+						if buf[0] == byte(btn.Key) {
+							btn.Callback()
+							resetBuf()
+						}
+					}
+
 					elapsed := time.Since(start)
 					sleepTime := frameDuration - elapsed
 					if sleepTime > 0 {
@@ -146,6 +167,8 @@ func main() {
 			go handleInputs()
 
 			for {
+				fmt.Print("\x1b[2J\x1b[H")
+				fmt.Printf("%t", settings_modal.Active)
 				start := time.Now()
 
 				for idx, row := range splash_screen {
@@ -157,6 +180,7 @@ func main() {
 				for _, btn := range buttons {
 					if buf[0] == byte(btn.Key) {
 						btn.Callback()
+						resetBuf()
 					}
 
 					rendered, err := btn.RenderToArrRunes()
@@ -164,11 +188,7 @@ func main() {
 						log.Fatal(err)
 					}
 
-					fmt.Printf("\033[%d;%dH%c", btn.Position.Y, btn.Position.X, rendered)
-				}
-
-				if buf[0] == 'q' {
-					return
+					fmt.Printf("\033[%d;%dH%s", btn.Position.Y, btn.Position.X, string(rendered))
 				}
 
 				if settings_modal.Active {
@@ -192,6 +212,7 @@ func main() {
 				if mode != "menu" {
 					break
 				}
+
 			}
 
 		case "main":
