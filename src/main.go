@@ -172,7 +172,7 @@ func main() {
 				}
 
 				if settings_modal.Active {
-					rendered, err := settings_modal.RenderToArrRunes()
+					/*rendered, err := settings_modal.RenderToArrRunes()
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -180,7 +180,7 @@ func main() {
 					for _, ln := range rendered {
 						fmt.Fprint(Writer, "\x1b[s"+string(ln))
 						fmt.Fprint(Writer, "\x1b[u;[1B")
-					}
+					}*/
 				}
 
 				elapsed := time.Since(start)
